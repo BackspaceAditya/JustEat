@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}JustEat - Food Delivery Made Easy{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <h1>Delicious Food, Delivered Fast</h1>
+        <p>Order from your favorite restaurants and get food delivered to your doorstep</p>
+        <div class="hero-actions">
+            {% if not current_user.is_authenticated %}
+                <a href="{{ url_for('login') }}" class="btn btn-large btn-primary">Get Started</a>
+            {% else %}
+                {% if current_user.role == 'customer' %}
+                    <a href="{{ url_for('browse_restaurants') }}" class="btn btn-large btn-primary">Order Now</a>
+                {% else %}
+                    <a href="{{ url_for('restaurant_dashboard') }}" class="btn btn-large btn-primary">Manage Restaurant</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% if not current_user.is_authenticated %}
+<section class="features" style="padding: 4rem 0; background: white;">
+    <div class="container">
+        <h2 class="text-center mb-4" style="font-size: 2.5rem; margin-bottom: 3rem;">Why Choose JustEat?</h2>
+        <div class="grid grid-3">
+            <div class="feature-card text-center">
+                <div class="feature-icon" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 style="margin-bottom: 1rem;">Fast Delivery</h3>
+                <p>Get your food delivered in 30 minutes or less from your favorite restaurants</p>
+            </div>
+            <div class="feature-card text-center">
+                <div class="feature-icon" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h3 style="margin-bottom: 1rem;">Quality Food</h3>
+                <p>Partner restaurants are carefully selected to ensure the highest quality meals</p>
+            </div>
+            <div class="feature-card text-center">
+                <div class="feature-icon" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 style="margin-bottom: 1rem;">Easy Ordering</h3>
+                <p>Simple and intuitive interface makes ordering food quick and hassle-free</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta" style="padding: 4rem 0; background: var(--background-light);">
+    <div class="container text-center">
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Order?</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 2rem; color: var(--text-secondary);">
+            Join thousands of satisfied customers who trust JustEat for their food delivery needs
+        </p>
+        <a href="{{ url_for('login') }}" class="btn btn-large btn-primary">Start Ordering Today</a>
+    </div>
+</section>
+{% endif %}
+
+{% if current_user.is_authenticated and current_user.role == 'customer' %}
+<section class="quick-access" style="padding: 2rem 0;">
+    <div class="container">
+        <div class="grid grid-2">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-search" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                    <h3>Browse Restaurants</h3>
+                    <p>Discover amazing restaurants in your area</p>
+                    <a href="{{ url_for('browse_restaurants') }}" class="btn btn-primary">Browse Now</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-history" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                    <h3>Order History</h3>
+                    <p>View your past orders and reorder favorites</p>
+                    <a href="{{ url_for('order_history') }}" class="btn btn-primary">View Orders</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

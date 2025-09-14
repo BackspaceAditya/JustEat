@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+
+{% block title %}{{ restaurant.name }} - JustEat{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    <!-- Restaurant Header -->
+    <div class="restaurant-header mb-4">
+        <div class="card">
+            <div class="restaurant-hero">
+                <img src="{{ restaurant.image_url or '/static/images/default-restaurant.jpg' }}" 
+                     alt="{{ restaurant.name }}" 
+                     style="width: 100%; height: 250px; object-fit: cover;">
+                <div class="restaurant-overlay">
+                    <div class="restaurant-info-header">
+                        <h1>{{ restaurant.name }}</h1>
+                        <p class="restaurant-cuisine">{{ restaurant.cuisine_type }}</p>
+                        <p class="restaurant-description">{{ restaurant.description }}</p>
+                        
+                        <div class="restaurant-stats">
+                            <div class="stat">
+                                <i class="fas fa-star star"></i>
+                                <span>{{ restaurant.get_average_rating() }}</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-clock"></i>
+                                <span>{{ restaurant.delivery_time }} min</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-truck"></i>
+                                <span>${{ "%.2f"|format(restaurant.delivery_fee) }} delivery</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span>Min. ${{ "%.2f"|format(restaurant.minimum_order) }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="restaurant-actions">
+                            <button class="btn btn-outline favorite-btn" 
+                                    data-restaurant-id="{{ restaurant.id }}"
+                                    onclick="toggleFavorite({{ restaurant.id }})">
+                                {% if is_favorite %}❤️{% else %}🤍{% endif %} 
+                                {{ 'Remove from' if is_favorite else 'Add to' }} Favorites
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Categories -->
+    {% if categories %}
+    <div class="menu-section">
+        <div class="menu-navigation mb-3">
+            <div class="category-tabs">
+                {% for category in categories.keys() %}
+                <button class="category-tab {% if loop.first %}active{% endif %}" 
+                        onclick="showCategory('{{ category }}')">
+                    {{ category }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% for category, items in categories.items() %}
+        <div class="category-section" id="category-{{ category }}" 
+             {% if not loop.first %}style="display: none;"{% endif %}>
+            <h2 class="category-title">{{ category }}</h2>
+            <div class="menu-items">
+                {% for item in items %}
+                <div class="menu-item" onclick="showItemModal({{ item.id }})">
+                    <div class="menu-item-info">
+                        <h3 class="menu-item-name">
+                            {{ item.name }}
+                            {% if item.is_mostly_ordered %}
+                            <span class="badge badge-popular">Mostly Ordered</span>
+                            {% endif %}
+                            {% if item.is_special %}
+                            <span class="badge badge-special">Special</span>
+                            {% endif %}
+                        </h3>
+                        <p class="menu-item-description">{{ item.description }}</p>
+                        <div class="menu-item-badges">
+                            {% if item.is_vegetarian %}
+                            <span class="badge badge-vegetarian">Vegetarian</span>
+                            {% endif %}
+                            {% if item.is_vegan %}
+                            <span class="badge badge-vegetarian">Vegan</span>
+                            {% endif %}
+                            {% if item.is_gluten_free %}
+                            <span class="badge badge-vegetarian">Gluten Free</span>
+                            {% endif %}
+                        </div>
+                        <div class="menu-item-footer">
+                            <span class="menu-item-price">${{ "%.2f"|format(item.price) }}</span>
+                            <button class="btn btn-small btn-primary add-to-cart-btn" 
+                                    data-menu-item-id="{{ item.id }}" 
+                                    data-quantity="1"
+                                    onclick="event.stopPropagation();">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                    {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.name }}" class="menu-item-image">
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-menu text-center" style="padding: 4rem 0;">
+        <i class="fas fa-utensils" style="font-size: 4rem; color: var(--text-light); margin-bottom: 1rem;"></i>
+        <h3>No menu items available</h3>
+        <p class="text-secondary">This restaurant hasn't added their menu yet</p>
+    </div>
+    {% endif %}
+
+    <!-- Reviews Section -->
+    {% if reviews %}
+    <div class="reviews-section mt-4">
+        <h2 class="mb-3">Customer Reviews</h2>
+        <div class="reviews-list">
+            {% for review in reviews %}
+            <div class="card review-card mb-2">
+                <div class="card-body">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <strong>{{ review.customer.username }}</strong>
+                            <div class="review-rating">
+                                {% for i in range(5) %}
+                                <i class="fas fa-star {% if i < review.rating %}star{% else %}text-muted{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <span class="review-date text-muted">{{ review.created_at.strftime('%B %d, %Y') }}</span>
+                    </div>
+                    {% if review.comment %}
+                    <p class="review-comment">{{ review.comment }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Item Modal -->
+<div id="itemModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalItemName"></h2>
+            <span class="close" onclick="ModalManager.hide('itemModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <img id="modalItemImage" src="" alt="" style="width: 100%; height: 200px; object-fit: cover; border-radius: var(--border-radius); margin-bottom: 1rem; display: none;">
+            <p id="modalItemDescription"></p>
+            <div id="modalItemBadges" class="menu-item-badges mb-3"></div>
+            
+            <div class="quantity-selector mb-3">
+                <label class="form-label">Quantity:</label>
+                <div class="quantity-controls">
+                    <button class="btn btn-small btn-outline quantity-btn" data-action="decrease">-</button>
+                    <input type="number" class="quantity-input" value="1" min="1" max="10">
+                    <button class="btn btn-small btn-outline quantity-btn" data-action="increase">+</button>
+                </div>
+            </div>
+            
+            <div class="special-instructions mb-3">
+                <label for="specialInstructions" class="form-label">Special Instructions (Optional):</label>
+                <textarea id="specialInstructions" class="form-control" rows="3" 
+                          placeholder="Any special requests or modifications..."></textarea>
+            </div>
+            
+            <div class="modal-footer">
+                <div class="item-total">
+                    <span>Total: $<span id="modalItemTotal">0.00</span></span>
+                </div>
+                <button class="btn btn-primary" onclick="addItemToCart()">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .restaurant-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--border-radius-large);
+    }
+    
+    .restaurant-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        color: white;
+        padding: 2rem;
+    }
+    
+    .restaurant-info-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .restaurant-stats {
+        display: flex;
+        gap: 2rem;
+        margin: 1rem 0;
+        flex-wrap: wrap;
+    }
+    
+    .stat {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .category-tabs {
+        display: flex;
+        gap: 1rem;
+        border-bottom: 2px solid var(--border-color);
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .category-tab {
+        background: none;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .category-tab.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+    }
+    
+    .category-tab:hover {
+        color: var(--primary-color);
+    }
+    
+    .category-title {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-primary);
+    }
+    
+    .menu-item-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+    }
+    
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .quantity-input {
+        width: 60px;
+        text-align: center;
+        border: 2px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 0.5rem;
+    }
+    
+    .review-card {
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .review-rating {
+        margin-top: 0.25rem;
+    }
+    
+    .review-comment {
+        margin-top: 0.5rem;
+        line-height: 1.5;
+    }
+    
+    @media (max-width: 768px) {
+        .restaurant-overlay {
+            padding: 1rem;
+        }
+        
+        .restaurant-info-header h1 {
+            font-size: 2rem;
+        }
+        
+        .restaurant-stats {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .category-tabs {
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        
+        .category-tab {
+            white-space: nowrap;
+        }
+    }
+</style>
+
+<script>
+    let currentItem = null;
+    
+    function showCategory(categoryName) {
+        // Hide all categories
+        document.querySelectorAll('.category-section').forEach(section => {
+            section.style.display = 'none';
+        });
+        
+        // Show selected category
+        document.getElementById(`category-${categoryName}`).style.display = 'block';
+        
+        // Update active tab
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        event.target.classList.add('active');
+    }
+    
+    function showItemModal(itemId) {
+        // This would typically fetch item details via AJAX
+        // For now, we'll extract from the page
+        const menuItem = document.querySelector(`[onclick="showItemModal(${itemId})"]`);
+        const name = menuItem.querySelector('.menu-item-name').textContent.trim();
+        const description = menuItem.querySelector('.menu-item-description').textContent;
+        const price = menuItem.querySelector('.menu-item-price').textContent.replace('$', '');
+        const image = menuItem.querySelector('.menu-item-image');
+        
+        document.getElementById('modalItemName').textContent = name;
+        document.getElementById('modalItemDescription').textContent = description;
+        
+        const modalImage = document.getElementById('modalItemImage');
+        if (image) {
+            modalImage.src = image.src;
+            modalImage.style.display = 'block';
+        } else {
+            modalImage.style.display = 'none';
+        }
+        
+        // Copy badges
+        const badges = menuItem.querySelector('.menu-item-badges');
+        if (badges) {
+            document.getElementById('modalItemBadges').innerHTML = badges.innerHTML;
+        }
+        
+        currentItem = {
+            id: itemId,
+            price: parseFloat(price)
+        };
+        
+        updateModalTotal();
+        ModalManager.show('itemModal');
+    }
+    
+    function updateModalTotal() {
+        if (currentItem) {
+            const quantity = parseInt(document.querySelector('.quantity-input').value);
+            const total = (currentItem.price * quantity).toFixed(2);
+            document.getElementById('modalItemTotal').textContent = total;
+        }
+    }
+    
+    function addItemToCart() {
+        if (currentItem) {
+            const quantity = parseInt(document.querySelector('.quantity-input').value);
+            const specialInstructions = document.getElementById('specialInstructions').value;
+            
+            window.cartManager.addToCart(currentItem.id, quantity, specialInstructions);
+            ModalManager.hide('itemModal');
+            
+            // Reset modal
+            document.querySelector('.quantity-input').value = 1;
+            document.getElementById('specialInstructions').value = '';
+        }
+    }
+    
+    // Update total when quantity changes
+    document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('quantity-input')) {
+            updateModalTotal();
+        }
+    });
+    
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('quantity-btn')) {
+            updateModalTotal();
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Restaurants - JustEat{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    <div class="page-header mb-4">
+        <h1>Restaurants</h1>
+        <p class="text-secondary">Discover amazing restaurants in your area</p>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="filters-section mb-4">
+        <div class="search-container mb-3">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="search-input" class="search-input" 
+                   placeholder="Search restaurants, cuisines, or dishes..." 
+                   value="{{ current_search }}">
+        </div>
+        
+        <div class="filter-controls">
+            <div class="filter-chips">
+                <select id="cuisine-filter" class="chip">
+                    <option value="">All Cuisines</option>
+                    {% for cuisine in cuisines %}
+                    <option value="{{ cuisine }}" {% if cuisine == current_cuisine %}selected{% endif %}>
+                        {{ cuisine }}
+                    </option>
+                    {% endfor %}
+                </select>
+                
+                <select id="sort-filter" class="chip">
+                    <option value="rating" {% if current_sort == 'rating' %}selected{% endif %}>Highest Rated</option>
+                    <option value="delivery_time" {% if current_sort == 'delivery_time' %}selected{% endif %}>Fastest Delivery</option>
+                    <option value="delivery_fee" {% if current_sort == 'delivery_fee' %}selected{% endif %}>Lowest Delivery Fee</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Count -->
+    <div class="results-info mb-3">
+        <p class="text-secondary">{{ restaurants|length }} restaurants found</p>
+    </div>
+
+    <!-- Restaurant Grid -->
+    {% if restaurants %}
+    <div class="restaurants-grid">
+        <div class="grid grid-3">
+            {% for restaurant in restaurants %}
+            <div class="card restaurant-card" onclick="window.location.href='{{ url_for('restaurant_menu', restaurant_id=restaurant.id) }}'">
+                <div class="restaurant-image-container">
+                    <img src="{{ restaurant.image_url or '/static/images/default-restaurant.jpg' }}" 
+                         alt="{{ restaurant.name }}" class="restaurant-image">
+                    <button class="favorite-btn" 
+                            data-restaurant-id="{{ restaurant.id }}"
+                            onclick="event.stopPropagation(); toggleFavorite({{ restaurant.id }})">
+                        🤍
+                    </button>
+                </div>
+                <div class="restaurant-info">
+                    <h3 class="restaurant-name">{{ restaurant.name }}</h3>
+                    <p class="restaurant-cuisine">{{ restaurant.cuisine_type }}</p>
+                    <p class="restaurant-description">{{ restaurant.description[:100] }}{% if restaurant.description|length > 100 %}...{% endif %}</p>
+                    
+                    <div class="restaurant-meta">
+                        <div class="rating">
+                            <i class="fas fa-star star"></i>
+                            <span>{{ restaurant.get_average_rating() }}</span>
+                        </div>
+                        <div class="delivery-info">
+                            <i class="fas fa-clock"></i>
+                            <span>{{ restaurant.delivery_time }} min</span>
+                        </div>
+                        <div class="delivery-fee">
+                            <i class="fas fa-truck"></i>
+                            <span>${{ "%.2f"|format(restaurant.delivery_fee) }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="restaurant-footer">
+                        <span class="minimum-order">Min. order: ${{ "%.2f"|format(restaurant.minimum_order) }}</span>
+                        {% if restaurant.delivery_fee == 0 %}
+                        <span class="badge badge-special">Free Delivery</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="no-results text-center" style="padding: 4rem 0;">
+        <i class="fas fa-search" style="font-size: 4rem; color: var(--text-light); margin-bottom: 1rem;"></i>
+        <h3>No restaurants found</h3>
+        <p class="text-secondary">Try adjusting your search criteria or browse all restaurants</p>
+        <a href="{{ url_for('browse_restaurants') }}" class="btn btn-primary">View All Restaurants</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .restaurant-image-container {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .favorite-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+    
+    .favorite-btn:hover {
+        background: white;
+        transform: scale(1.1);
+    }
+    
+    .favorite-btn.active {
+        background: var(--primary-color);
+        color: white;
+    }
+    
+    .restaurant-description {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        line-height: 1.4;
+    }
+    
+    .restaurant-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+    
+    .restaurant-meta > div {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .restaurant-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+        font-size: 0.9rem;
+    }
+    
+    .minimum-order {
+        color: var(--text-secondary);
+    }
+    
+    .filter-controls {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .filter-controls select {
+        border: 2px solid var(--border-color);
+        border-radius: 20px;
+        padding: 8px 16px;
+        background: white;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+    
+    .filter-controls select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    
+    .results-info {
+        font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+        .restaurant-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .restaurant-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .filter-controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .filter-controls select {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    // Initialize filters
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up filter change handlers
+        const searchInput = document.getElementById('search-input');
+        const cuisineFilter = document.getElementById('cuisine-filter');
+        const sortFilter = document.getElementById('sort-filter');
+        
+        function applyFilters() {
+            const params = new URLSearchParams();
+            
+            if (searchInput.value.trim()) {
+                params.append('search', searchInput.value.trim());
+            }
+            
+            if (cuisineFilter.value) {
+                params.append('cuisine', cuisineFilter.value);
+            }
+            
+            if (sortFilter.value) {
+                params.append('sort', sortFilter.value);
+            }
+            
+            window.location.href = `{{ url_for('browse_restaurants') }}?${params.toString()}`;
+        }
+        
+        // Debounced search
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(applyFilters, 500);
+        });
+        
+        // Immediate filter changes
+        cuisineFilter.addEventListener('change', applyFilters);
+        sortFilter.addEventListener('change', applyFilters);
+        
+        // Enter key search
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                clearTimeout(searchTimeout);
+                applyFilters();
+            }
+        });
+    });
+</script>
+{% endblock %}

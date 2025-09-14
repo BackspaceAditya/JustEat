@@ -1,0 +1,500 @@
+{% extends "base.html" %}
+
+{% block title %}Menu Management - JustEat{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    <div class="page-header mb-4">
+        <h1>Menu Management</h1>
+        <p class="text-secondary">Manage your restaurant menu items</p>
+    </div>
+
+    <!-- Restaurant Selection -->
+    {% if restaurants|length > 1 %}
+    <div class="restaurant-selector mb-4">
+        <div class="form-group">
+            <label for="restaurantSelect" class="form-label">Select Restaurant:</label>
+            <select id="restaurantSelect" class="form-control" onchange="changeRestaurant()">
+                <option value="">Choose a restaurant...</option>
+                {% for rest in restaurants %}
+                <option value="{{ rest.id }}" {% if restaurant and rest.id == restaurant.id %}selected{% endif %}>
+                    {{ rest.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if restaurant %}
+    <!-- Restaurant Info -->
+    <div class="restaurant-info mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h3>{{ restaurant.name }}</h3>
+                <p class="text-secondary">{{ restaurant.cuisine_type }} • {{ restaurant.address }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Item Button -->
+    <div class="menu-actions mb-4">
+        <button class="btn btn-primary" onclick="showAddItemModal()">
+            <i class="fas fa-plus"></i> Add Menu Item
+        </button>
+    </div>
+
+    <!-- Menu Categories -->
+    {% if categories %}
+    <div class="menu-categories">
+        {% for category, items in categories.items() %}
+        <div class="category-section mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ category }} ({{ items|length }} items)</h3>
+                </div>
+                <div class="card-body">
+                    <div class="menu-items-grid">
+                        {% for item in items %}
+                        <div class="menu-item-card">
+                            <div class="item-header">
+                                <h4>{{ item.name }}</h4>
+                                <div class="item-badges">
+                                    {% if not item.is_available %}
+                                    <span class="badge badge-unavailable">Unavailable</span>
+                                    {% endif %}
+                                    {% if item.is_special %}
+                                    <span class="badge badge-special">Special</span>
+                                    {% endif %}
+                                    {% if item.is_mostly_ordered %}
+                                    <span class="badge badge-popular">Mostly Ordered</span>
+                                    {% endif %}
+                                    {% if item.is_vegetarian %}
+                                    <span class="badge badge-vegetarian">Vegetarian</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <p class="item-description">{{ item.description }}</p>
+                            <p class="item-price">${{ "%.2f"|format(item.price) }}</p>
+                            
+                            <div class="item-stats">
+                                <span class="order-count">
+                                    <i class="fas fa-chart-bar"></i>
+                                    {{ item.order_count }} orders
+                                </span>
+                            </div>
+                            
+                            <div class="item-actions">
+                                <button class="btn btn-small btn-outline edit-item-btn" 
+                                        data-item-id="{{ item.id }}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-small btn-outline toggle-availability-btn" 
+                                        data-item-id="{{ item.id }}"
+                                        data-available="{{ item.is_available }}">
+                                    <i class="fas fa-eye{% if not item.is_available %}-slash{% endif %}"></i>
+                                    {{ 'Hide' if item.is_available else 'Show' }}
+                                </button>
+                                <button class="btn btn-small btn-outline delete-item-btn" 
+                                        data-item-id="{{ item.id }}">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-menu text-center" style="padding: 4rem 0;">
+        <i class="fas fa-utensils" style="font-size: 4rem; color: var(--text-light); margin-bottom: 1rem;"></i>
+        <h3>No menu items yet</h3>
+        <p class="text-secondary">Start building your menu by adding your first item</p>
+        <button class="btn btn-primary" onclick="showAddItemModal()">
+            <i class="fas fa-plus"></i> Add First Item
+        </button>
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <div class="no-restaurant text-center" style="padding: 4rem 0;">
+        <i class="fas fa-store" style="font-size: 4rem; color: var(--text-light); margin-bottom: 1rem;"></i>
+        <h3>Select a restaurant to manage its menu</h3>
+        <p class="text-secondary">Choose from the dropdown above to get started</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Add/Edit Item Modal -->
+<div id="itemModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Add Menu Item</h2>
+            <span class="close" onclick="ModalManager.hide('itemModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="itemForm">
+                <div class="form-group">
+                    <label for="itemName" class="form-label">Name *</label>
+                    <input type="text" id="itemName" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="itemDescription" class="form-label">Description</label>
+                    <textarea id="itemDescription" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1; margin-right: 1rem;">
+                        <label for="itemPrice" class="form-label">Price *</label>
+                        <input type="number" id="itemPrice" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group" style="flex: 1;">
+                        <label for="itemCategory" class="form-label">Category *</label>
+                        <input type="text" id="itemCategory" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Options</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="isVegetarian">
+                            <span>Vegetarian</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="isVegan">
+                            <span>Vegan</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="isGlutenFree">
+                            <span>Gluten Free</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="isSpecial">
+                            <span>Today's Special</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="isAvailable" checked>
+                            <span>Available</span>
+                        </label>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="ModalManager.hide('itemModal')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveMenuItem()">Save Item</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .menu-items-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+    }
+    
+    .menu-item-card {
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        background: white;
+        transition: all 0.3s ease;
+    }
+    
+    .menu-item-card:hover {
+        box-shadow: var(--shadow-light);
+    }
+    
+    .item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+    }
+    
+    .item-header h4 {
+        margin: 0;
+        flex: 1;
+    }
+    
+    .item-badges {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        align-items: flex-end;
+    }
+    
+    .badge-unavailable {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .item-description {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+    
+    .item-price {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    
+    .item-stats {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        margin-bottom: 1rem;
+    }
+    
+    .item-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .form-row {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.5rem;
+    }
+    
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+    
+    .checkbox-label input[type="checkbox"] {
+        margin: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .menu-items-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .item-header {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .item-badges {
+            flex-direction: row;
+            align-items: flex-start;
+        }
+        
+        .item-actions {
+            flex-direction: column;
+        }
+        
+        .form-row {
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        .form-row .form-group {
+            margin-right: 0 !important;
+        }
+    }
+</style>
+
+<script>
+    let currentItemId = null;
+    let currentRestaurantId = {{ restaurant.id if restaurant else 'null' }};
+    
+    function changeRestaurant() {
+        const select = document.getElementById('restaurantSelect');
+        const restaurantId = select.value;
+        
+        if (restaurantId) {
+            window.location.href = `{{ url_for('restaurant_menu_management') }}?restaurant_id=${restaurantId}`;
+        } else {
+            window.location.href = `{{ url_for('restaurant_menu_management') }}`;
+        }
+    }
+    
+    function showAddItemModal() {
+        if (!currentRestaurantId) {
+            showToast('Please select a restaurant first', 'warning');
+            return;
+        }
+        
+        currentItemId = null;
+        document.getElementById('modalTitle').textContent = 'Add Menu Item';
+        document.getElementById('itemForm').reset();
+        document.getElementById('isAvailable').checked = true;
+        ModalManager.show('itemModal');
+    }
+    
+    function showEditItemModal(itemId) {
+        currentItemId = itemId;
+        document.getElementById('modalTitle').textContent = 'Edit Menu Item';
+        
+        // Find the item card and extract data
+        const itemCard = document.querySelector(`[data-item-id="${itemId}"]`).closest('.menu-item-card');
+        const name = itemCard.querySelector('h4').textContent;
+        const description = itemCard.querySelector('.item-description').textContent;
+        const price = itemCard.querySelector('.item-price').textContent.replace('$', '');
+        
+        // Fill form with current values
+        document.getElementById('itemName').value = name;
+        document.getElementById('itemDescription').value = description;
+        document.getElementById('itemPrice').value = price;
+        
+        // Extract category from the section
+        const categorySection = itemCard.closest('.category-section');
+        const category = categorySection.querySelector('h3').textContent.split(' (')[0];
+        document.getElementById('itemCategory').value = category;
+        
+        // Set checkboxes based on badges
+        const badges = itemCard.querySelectorAll('.badge');
+        document.getElementById('isVegetarian').checked = Array.from(badges).some(b => b.textContent === 'Vegetarian');
+        document.getElementById('isSpecial').checked = Array.from(badges).some(b => b.textContent === 'Special');
+        document.getElementById('isAvailable').checked = !Array.from(badges).some(b => b.textContent === 'Unavailable');
+        
+        ModalManager.show('itemModal');
+    }
+    
+    async function saveMenuItem() {
+        if (!validateForm('itemForm')) {
+            return;
+        }
+        
+        const formData = {
+            name: document.getElementById('itemName').value,
+            description: document.getElementById('itemDescription').value,
+            price: parseFloat(document.getElementById('itemPrice').value),
+            category: document.getElementById('itemCategory').value,
+            is_vegetarian: document.getElementById('isVegetarian').checked,
+            is_vegan: document.getElementById('isVegan').checked,
+            is_gluten_free: document.getElementById('isGlutenFree').checked,
+            is_special: document.getElementById('isSpecial').checked,
+            is_available: document.getElementById('isAvailable').checked
+        };
+        
+        try {
+            let url, method;
+            if (currentItemId) {
+                url = '/api/menu/update';
+                formData.item_id = currentItemId;
+            } else {
+                url = '/api/menu/add';
+                formData.restaurant_id = currentRestaurantId;
+            }
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showToast(data.message, 'success');
+                ModalManager.hide('itemModal');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error saving menu item:', error);
+            showToast('Failed to save menu item', 'error');
+        }
+    }
+    
+    // Event handlers
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('edit-item-btn')) {
+            const itemId = e.target.dataset.itemId;
+            showEditItemModal(itemId);
+        }
+        
+        if (e.target.classList.contains('delete-item-btn')) {
+            const itemId = e.target.dataset.itemId;
+            deleteMenuItem(itemId);
+        }
+        
+        if (e.target.classList.contains('toggle-availability-btn')) {
+            const itemId = e.target.dataset.itemId;
+            const isAvailable = e.target.dataset.available === 'True';
+            toggleItemAvailability(itemId, !isAvailable);
+        }
+    });
+    
+    async function deleteMenuItem(itemId) {
+        if (!confirm('Are you sure you want to delete this menu item?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/menu/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ item_id: itemId })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showToast(data.message, 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting menu item:', error);
+            showToast('Failed to delete menu item', 'error');
+        }
+    }
+    
+    async function toggleItemAvailability(itemId, isAvailable) {
+        try {
+            const response = await fetch('/api/menu/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    item_id: itemId,
+                    is_available: isAvailable
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showToast(data.message, 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error updating item availability:', error);
+            showToast('Failed to update item availability', 'error');
+        }
+    }
+</script>
+{% endblock %}

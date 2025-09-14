@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - JustEat{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    <div class="welcome-section mb-4">
+        <h1>Welcome back, {{ current_user.username }}!</h1>
+        <p class="text-secondary">What would you like to eat today?</p>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section mb-4">
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="search-input" class="search-input" placeholder="Search for restaurants, cuisines, or dishes...">
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions mb-4">
+        <div class="grid grid-4">
+            <a href="{{ url_for('browse_restaurants') }}" class="card quick-action-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-store" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <h4>Browse Restaurants</h4>
+                </div>
+            </a>
+            <a href="{{ url_for('view_cart') }}" class="card quick-action-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-shopping-cart" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <h4>View Cart</h4>
+                </div>
+            </a>
+            <a href="{{ url_for('order_history') }}" class="card quick-action-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-history" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <h4>Order History</h4>
+                </div>
+            </a>
+            <a href="#" onclick="showProfileModal()" class="card quick-action-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-user" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <h4>Profile</h4>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    {% if recommendations %}
+    <section class="recommendations mb-4">
+        <h2 class="mb-3">Recommended for You</h2>
+        <div class="grid grid-3">
+            {% for item in recommendations %}
+            <div class="card menu-item-card">
+                <img src="{{ item.image_url or '/static/images/default-food.jpg' }}" alt="{{ item.name }}" class="menu-item-image" style="width: 100%; height: 150px; object-fit: cover;">
+                <div class="card-body">
+                    <h4>{{ item.name }}</h4>
+                    <p class="text-secondary">{{ item.restaurant.name }}</p>
+                    <p class="menu-item-description">{{ item.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="menu-item-price">${{ "%.2f"|format(item.price) }}</span>
+                        <button class="btn btn-small btn-primary add-to-cart-btn" 
+                                data-menu-item-id="{{ item.id }}" 
+                                data-quantity="1">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Favorite Restaurants -->
+    {% if favorites %}
+    <section class="favorites mb-4">
+        <h2 class="mb-3">Your Favorite Restaurants</h2>
+        <div class="grid grid-3">
+            {% for restaurant in favorites %}
+            <div class="card restaurant-card" onclick="window.location.href='{{ url_for('restaurant_menu', restaurant_id=restaurant.id) }}';">
+                <img src="{{ restaurant.image_url or '/static/images/default-restaurant.jpg' }}" alt="{{ restaurant.name }}" class="restaurant-image">
+                <div class="restaurant-info">
+                    <h3 class="restaurant-name">{{ restaurant.name }}</h3>
+                    <p class="restaurant-cuisine">{{ restaurant.cuisine_type }}</p>
+                    <div class="restaurant-meta">
+                        <div class="rating">
+                            <i class="fas fa-star star"></i>
+                            <span>{{ restaurant.rating }}</span>
+                        </div>
+                        <span>{{ restaurant.delivery_time }} min</span>
+                        <span>${{ "%.2f"|format(restaurant.delivery_fee) }} delivery</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Recent Orders -->
+    {% if recent_orders %}
+    <section class="recent-orders mb-4">
+        <h2 class="mb-3">Recent Orders</h2>
+        <div class="orders-list">
+            {% for order in recent_orders %}
+            <div class="card order-card mb-2">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4>{{ order.restaurant.name }}</h4>
+                            <p class="text-secondary">{{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                            <span class="status-badge status-{{ order.status }}">{{ order.status.title() }}</span>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold">${{ "%.2f"|format(order.total_amount) }}</p>
+                            <a href="{{ url_for('order_details', order_id=order.id) }}" class="btn btn-small btn-outline">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Popular Restaurants -->
+    <section class="popular-restaurants">
+        <h2 class="mb-3">Popular Restaurants</h2>
+        <div class="grid grid-3">
+            {% for restaurant in restaurants[:6] %}
+            <div class="card restaurant-card" onclick="window.location.href='{{ url_for('restaurant_menu', restaurant_id=restaurant.id) }}';">
+                <img src="{{ restaurant.image_url or '/static/images/default-restaurant.jpg' }}" alt="{{ restaurant.name }}" class="restaurant-image">
+                <div class="restaurant-info">
+                    <h3 class="restaurant-name">{{ restaurant.name }}</h3>
+                    <p class="restaurant-cuisine">{{ restaurant.cuisine_type }}</p>
+                    <div class="restaurant-meta">
+                        <div class="rating">
+                            <i class="fas fa-star star"></i>
+                            <span>{{ restaurant.rating }}</span>
+                        </div>
+                        <span>{{ restaurant.delivery_time }} min</span>
+                        <span>${{ "%.2f"|format(restaurant.delivery_fee) }} delivery</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-3">
+            <a href="{{ url_for('browse_restaurants') }}" class="btn btn-primary">View All Restaurants</a>
+        </div>
+    </section>
+</div>
+
+<style>
+    .quick-action-card {
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+    }
+    
+    .quick-action-card:hover {
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .order-card {
+        cursor: pointer;
+    }
+    
+    .d-flex {
+        display: flex;
+    }
+    
+    .justify-content-between {
+        justify-content: space-between;
+    }
+    
+    .align-items-center {
+        align-items: center;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .menu-item-card {
+        transition: all 0.3s ease;
+    }
+    
+    .menu-item-card:hover {
+        transform: translateY(-2px);
+    }
+</style>
+
+<script>
+    // Enhanced search functionality
+    document.getElementById('search-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const searchTerm = this.value.trim();
+            if (searchTerm) {
+                window.location.href = `{{ url_for('browse_restaurants') }}?search=${encodeURIComponent(searchTerm)}`;
+            }
+        }
+    });
+</script>
+{% endblock %}

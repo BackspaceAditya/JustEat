@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Login - JustEat{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 400px; margin: 4rem auto; padding: 2rem;">
+    <div class="card">
+        <div class="card-header text-center">
+            <h2>Welcome Back</h2>
+            <p class="text-secondary">Sign in to your JustEat account</p>
+        </div>
+        <div class="card-body">
+            <form method="POST" id="loginForm">
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-large" style="width: 100%;">
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="text-center mt-3">
+                <a href="{{ url_for('reset_password') }}" class="text-primary">Forgot your password?</a>
+            </div>
+            
+            <div class="text-center mt-2">
+                <p>Don't have an account? <a href="{{ url_for('signup') }}" class="text-primary">Sign up here</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="demo-accounts" style="margin-top: 2rem;">
+        <div class="card">
+            <div class="card-header">
+                <h4>Demo Accounts</h4>
+            </div>
+            <div class="card-body">
+                <div class="demo-section">
+                    <h5>Customer Accounts:</h5>
+                    <div class="demo-account">
+                        <strong>Username:</strong> john_doe<br>
+                        <strong>Password:</strong> password123
+                        <button class="btn btn-small btn-outline mt-1" onclick="fillLogin('john_doe', 'password123')">
+                            Use This Account
+                        </button>
+                    </div>
+                    <div class="demo-account mt-2">
+                        <strong>Username:</strong> jane_smith<br>
+                        <strong>Password:</strong> password123
+                        <button class="btn btn-small btn-outline mt-1" onclick="fillLogin('jane_smith', 'password123')">
+                            Use This Account
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="demo-section mt-3">
+                    <h5>Restaurant Owner Accounts:</h5>
+                    <div class="demo-account">
+                        <strong>Username:</strong> pizza_palace_owner<br>
+                        <strong>Password:</strong> password123
+                        <button class="btn btn-small btn-outline mt-1" onclick="fillLogin('pizza_palace_owner', 'password123')">
+                            Use This Account
+                        </button>
+                    </div>
+                    <div class="demo-account mt-2">
+                        <strong>Username:</strong> burger_barn_owner<br>
+                        <strong>Password:</strong> password123
+                        <button class="btn btn-small btn-outline mt-1" onclick="fillLogin('burger_barn_owner', 'password123')">
+                            Use This Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .demo-accounts {
+        font-size: 0.9rem;
+    }
+    
+    .demo-section h5 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .demo-account {
+        padding: 1rem;
+        background: var(--background-light);
+        border-radius: var(--border-radius);
+        margin-bottom: 1rem;
+    }
+    
+    .demo-account:last-child {
+        margin-bottom: 0;
+    }
+</style>
+
+<script>
+    function fillLogin(username, password) {
+        document.getElementById('username').value = username;
+        document.getElementById('password').value = password;
+    }
+    
+    // Form validation
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        if (!validateForm('loginForm')) {
+            e.preventDefault();
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+
+{% block title %}Cart - JustEat{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    <div class="page-header mb-4">
+        <h1>Your Cart</h1>
+        {% if restaurant_items %}
+        <p class="text-secondary">Review your items and place your order</p>
+        {% endif %}
+    </div>
+
+    {% if restaurant_items %}
+        {% for restaurant_id, data in restaurant_items.items() %}
+        <div class="restaurant-cart-section mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="restaurant-cart-header">
+                        <h3>{{ data.restaurant.name }}</h3>
+                        <div class="restaurant-cart-meta">
+                            <span class="delivery-time">
+                                <i class="fas fa-clock"></i>
+                                {{ data.restaurant.delivery_time }} min
+                            </span>
+                            <span class="delivery-fee">
+                                <i class="fas fa-truck"></i>
+                                ${{ "%.2f"|format(data.restaurant.delivery_fee) }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="cart-items">
+                        {% for item_data in data.items %}
+                        <div class="cart-item">
+                            <div class="cart-item-info">
+                                <h4>{{ item_data.cart_item.menu_item.name }}</h4>
+                                <p class="item-price">${{ "%.2f"|format(item_data.cart_item.menu_item.price) }} each</p>
+                                {% if item_data.cart_item.special_instructions %}
+                                <p class="special-instructions">
+                                    <i class="fas fa-sticky-note"></i>
+                                    {{ item_data.cart_item.special_instructions }}
+                                </p>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="cart-item-controls">
+                                <div class="quantity-controls">
+                                    <button class="btn btn-small btn-outline quantity-btn" 
+                                            data-action="decrease" 
+                                            data-cart-id="{{ item_data.cart_item.id }}">-</button>
+                                    <span class="quantity-display">{{ item_data.cart_item.quantity }}</span>
+                                    <button class="btn btn-small btn-outline quantity-btn" 
+                                            data-action="increase" 
+                                            data-cart-id="{{ item_data.cart_item.id }}">+</button>
+                                </div>
+                                
+                                <div class="item-total">
+                                    ${{ "%.2f"|format(item_data.total) }}
+                                </div>
+                                
+                                <button class="btn btn-small btn-outline remove-item-btn" 
+                                        data-cart-id="{{ item_data.cart_item.id }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <div class="cart-summary">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span>${{ "%.2f"|format(data.subtotal) }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Delivery Fee:</span>
+                            <span>${{ "%.2f"|format(data.restaurant.delivery_fee) }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax (8%):</span>
+                            <span>${{ "%.2f"|format(data.subtotal * 0.08) }}</span>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span>Total:</span>
+                            <span>${{ "%.2f"|format(data.subtotal + data.restaurant.delivery_fee + (data.subtotal * 0.08)) }}</span>
+                        </div>
+                        
+                        {% if data.subtotal < data.restaurant.minimum_order %}
+                        <div class="minimum-order-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Minimum order is ${{ "%.2f"|format(data.restaurant.minimum_order) }}. 
+                            Add ${{ "%.2f"|format(data.restaurant.minimum_order - data.subtotal) }} more to continue.
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="cart-actions">
+                        <button class="btn btn-outline" onclick="window.location.href='{{ url_for('restaurant_menu', restaurant_id=restaurant_id) }}'">
+                            Add More Items
+                        </button>
+                        
+                        <button class="btn btn-primary checkout-btn" 
+                                data-restaurant-id="{{ restaurant_id }}"
+                                {% if data.subtotal < data.restaurant.minimum_order %}disabled{% endif %}>
+                            Place Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="empty-cart text-center" style="padding: 4rem 0;">
+        <i class="fas fa-shopping-cart" style="font-size: 4rem; color: var(--text-light); margin-bottom: 1rem;"></i>
+        <h3>Your cart is empty</h3>
+        <p class="text-secondary">Add some delicious items from our restaurants</p>
+        <a href="{{ url_for('browse_restaurants') }}" class="btn btn-primary">Browse Restaurants</a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Checkout Modal -->
+<div id="checkoutModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Place Order</h2>
+            <span class="close" onclick="ModalManager.hide('checkoutModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="orderNotes" class="form-label">Order Notes (Optional):</label>
+                <textarea id="orderNotes" class="form-control" rows="3" 
+                          placeholder="Any special instructions for your order..."></textarea>
+            </div>
+            
+            <div class="order-summary">
+                <h4>Order Summary</h4>
+                <div id="checkoutSummary"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="ModalManager.hide('checkoutModal')">Cancel</button>
+            <button class="btn btn-primary" onclick="confirmOrder()">Confirm Order</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .restaurant-cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .restaurant-cart-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+    
+    .restaurant-cart-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .cart-item:last-child {
+        border-bottom: none;
+    }
+    
+    .cart-item-info h4 {
+        margin-bottom: 0.5rem;
+    }
+    
+    .item-price {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .special-instructions {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        font-style: italic;
+        margin-bottom: 0;
+    }
+    
+    .cart-item-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .quantity-display {
+        min-width: 30px;
+        text-align: center;
+        font-weight: bold;
+    }
+    
+    .item-total {
+        font-weight: bold;
+        color: var(--primary-color);
+        min-width: 60px;
+        text-align: right;
+    }
+    
+    .cart-summary {
+        margin-bottom: 1.5rem;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .total-row {
+        font-weight: bold;
+        font-size: 1.1rem;
+        padding-top: 0.5rem;
+        border-top: 2px solid var(--border-color);
+        color: var(--primary-color);
+    }
+    
+    .minimum-order-warning {
+        background: #fff3cd;
+        color: #856404;
+        padding: 0.75rem;
+        border-radius: var(--border-radius);
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .cart-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+    
+    .order-summary {
+        background: var(--background-light);
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        margin-top: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .restaurant-cart-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .cart-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .cart-item-controls {
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .cart-actions {
+            flex-direction: column;
+        }
+        
+        .cart-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    let currentRestaurantId = null;
+    
+    // Quantity update handlers
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('quantity-btn')) {
+            const action = e.target.dataset.action;
+            const cartId = e.target.dataset.cartId;
+            updateCartQuantity(cartId, action);
+        }
+        
+        if (e.target.classList.contains('remove-item-btn')) {
+            const cartId = e.target.dataset.cartId;
+            removeCartItem(cartId);
+        }
+        
+        if (e.target.classList.contains('checkout-btn')) {
+            currentRestaurantId = e.target.dataset.restaurantId;
+            showCheckoutModal();
+        }
+    });
+    
+    async function updateCartQuantity(cartId, action) {
+        try {
+            const response = await fetch('/api/cart/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    cart_id: cartId,
+                    action: action
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                location.reload(); // Refresh to show updated quantities
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error updating cart:', error);
+            showToast('Failed to update cart', 'error');
+        }
+    }
+    
+    async function removeCartItem(cartId) {
+        if (confirm('Remove this item from your cart?')) {
+            try {
+                const response = await fetch('/api/cart/remove', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cart_id: cartId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    location.reload();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error removing item:', error);
+                showToast('Failed to remove item', 'error');
+            }
+        }
+    }
+    
+    function showCheckoutModal() {
+        // Populate checkout summary
+        const restaurantSection = document.querySelector(`[data-restaurant-id="${currentRestaurantId}"]`).closest('.restaurant-cart-section');
+        const summary = restaurantSection.querySelector('.cart-summary').innerHTML;
+        document.getElementById('checkoutSummary').innerHTML = summary;
+        
+        ModalManager.show('checkoutModal');
+    }
+    
+    function confirmOrder() {
+        const notes = document.getElementById('orderNotes').value;
+        placeOrder(currentRestaurantId, notes);
+        ModalManager.hide('checkoutModal');
+    }
+</script>
+{% endblock %}

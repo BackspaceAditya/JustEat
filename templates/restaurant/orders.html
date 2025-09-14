@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+
+{% block title %}Orders Management - JustEat{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    <div class="page-header mb-4">
+        <h1>Orders Management</h1>
+        <p class="text-secondary">Manage and track all your restaurant orders</p>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filters-section mb-4">
+        <div class="filter-chips">
+            <a href="{{ url_for('restaurant_orders') }}" 
+               class="chip {% if not status_filter %}active{% endif %}">All Orders</a>
+            <a href="{{ url_for('restaurant_orders', status='pending') }}" 
+               class="chip {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
+            <a href="{{ url_for('restaurant_orders', status='confirmed') }}" 
+               class="chip {% if status_filter == 'confirmed' %}active{% endif %}">Confirmed</a>
+            <a href="{{ url_for('restaurant_orders', status='preparing') }}" 
+               class="chip {% if status_filter == 'preparing' %}active{% endif %}">Preparing</a>
+            <a href="{{ url_for('restaurant_orders', status='ready') }}" 
+               class="chip {% if status_filter == 'ready' %}active{% endif %}">Ready</a>
+            <a href="{{ url_for('restaurant_orders', status='delivered') }}" 
+               class="chip {% if status_filter == 'delivered' %}active{% endif %}">Delivered</a>
+        </div>
+    </div>
+
+    {% if orders and orders.items %}
+    <!-- Orders List -->
+    <div class="orders-list">
+        {% for order in orders.items %}
+        <div class="card order-card mb-3">
+            <div class="card-header">
+                <div class="order-header">
+                    <div class="order-info">
+                        <h3>Order #{{ order.id }}</h3>
+                        <p class="order-meta">
+                            <span class="customer-name">{{ order.customer.username }}</span>
+                            <span class="order-date">{{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</span>
+                        </p>
+                    </div>
+                    <div class="order-status-section">
+                        <span class="order-total">${{ "%.2f"|format(order.total_amount) }}</span>
+                        <div class="status-controls">
+                            <span class="status-badge status-{{ order.status }}">{{ order.status.replace('_', ' ').title() }}</span>
+                            <select class="status-select" data-order-id="{{ order.id }}">
+                                <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="confirmed" {% if order.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                <option value="preparing" {% if order.status == 'preparing' %}selected{% endif %}>Preparing</option>
+                                <option value="ready" {% if order.status == 'ready' %}selected{% endif %}>Ready</option>
+                                <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                                <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <div class="order-items">
+                    <h4>Items:</h4>
+                    <div class="items-list">
+                        {% for item in order.order_items %}
+                        <div class="order-item">
+                            <div class="item-details">
+                                <span class="item-name">{{ item.quantity }}x {{ item.menu_item.name }}</span>
+                                {% if item.special_instructions %}
+                                <span class="special-instructions">
+                                    <i class="fas fa-sticky-note"></i>
+                                    {{ item.special_instructions }}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <span class="item-price">${{ "%.2f"|format(item.price * item.quantity) }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                {% if order.notes %}
+                <div class="order-notes">
+                    <h5>Customer Notes:</h5>
+                    <p>{{ order.notes }}</p>
+                </div>
+                {% endif %}
+                
+                <div class="order-summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>${{ "%.2f"|format(order.total_amount - order.delivery_fee - order.tax_amount) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery Fee:</span>
+                        <span>${{ "%.2f"|format(order.delivery_fee) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax:</span>
+                        <span>${{ "%.2f"|format(order.tax_amount) }}</span>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span>Total:</span>
+                        <span>${{ "%.2f"|format(order.total_amount) }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <div class="order-actions">
+                    {% if order.status == 'pending' %}
+                    <button class="btn btn-small btn-primary quick-action-btn" 
+                            data-order-id="{{ order.id }}" 
+                            data-action="confirmed">
+                        <i class="fas fa-check"></i> Confirm Order
+                    </button>
+                    <button class="btn btn-small btn-outline quick-action-btn" 
+                            data-order-id="{{ order.id }}" 
+                            data-action="cancelled">
+                        <i class="fas fa-times"></i> Cancel Order
+                    </button>
+                    {% elif order.status == 'confirmed' %}
+                    <button class="btn btn-small btn-primary quick-action-btn" 
+                            data-order-id="{{ order.id }}" 
+                            data-action="preparing">
+                        <i class="fas fa-fire"></i> Start Preparing
+                    </button>
+                    {% elif order.status == 'preparing' %}
+                    <button class="btn btn-small btn-primary quick-action-btn" 
+                            data-order-id="{{ order.id }}" 
+                            data-action="ready">
+                        <i class="fas fa-bell"></i> Mark Ready
+                    </button>
+                    {% elif order.status == 'ready' %}
+                    <button class="btn btn-small btn-primary quick-action-btn" 
+                            data-order-id="{{ order.id }}" 
+                            data-action="delivered">
+                        <i class="fas fa-truck"></i> Mark Delivered
+                    </button>
+                    {% endif %}
+                    
+                    <span class="order-timing">
+                        Updated: {{ order.updated_at.strftime('%I:%M %p') }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if orders.pages > 1 %}
+    <div class="pagination-container text-center mt-4">
+        <div class="pagination">
+            {% if orders.has_prev %}
+            <a href="{{ url_for('restaurant_orders', page=orders.prev_num, status=status_filter) }}" class="btn btn-outline">Previous</a>
+            {% endif %}
+            
+            {% for page_num in orders.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num != orders.page %}
+                    <a href="{{ url_for('restaurant_orders', page=page_num, status=status_filter) }}" class="btn btn-outline">{{ page_num }}</a>
+                    {% else %}
+                    <span class="btn btn-primary">{{ page_num }}</span>
+                    {% endif %}
+                {% else %}
+                <span>...</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if orders.has_next %}
+            <a href="{{ url_for('restaurant_orders', page=orders.next_num, status=status_filter) }}" class="btn btn-outline">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <div class="no-orders text-center" style="padding: 4rem 0;">
+        <i class="fas fa-receipt" style="font-size: 4rem; color: var(--text-light); margin-bottom: 1rem;"></i>
+        <h3>No orders found</h3>
+        {% if status_filter %}
+        <p class="text-secondary">No {{ status_filter }} orders at the moment</p>
+        <a href="{{ url_for('restaurant_orders') }}" class="btn btn-outline">View All Orders</a>
+        {% else %}
+        <p class="text-secondary">You haven't received any orders yet</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    
+    .order-meta {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    
+    .customer-name {
+        font-weight: 600;
+        margin-right: 1rem;
+    }
+    
+    .order-status-section {
+        text-align: right;
+    }
+    
+    .order-total {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    
+    .status-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-end;
+    }
+    
+    .status-select {
+        padding: 0.25rem 0.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        font-size: 0.8rem;
+        background: white;
+        min-width: 120px;
+    }
+    
+    .order-items h4 {
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+    }
+    
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .order-item:last-child {
+        border-bottom: none;
+    }
+    
+    .item-details {
+        flex: 1;
+    }
+    
+    .item-name {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+    
+    .special-instructions {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        font-style: italic;
+        display: block;
+    }
+    
+    .item-price {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+    
+    .order-notes {
+        background: var(--background-light);
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        margin: 1rem 0;
+    }
+    
+    .order-notes h5 {
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+    }
+    
+    .order-summary {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+    
+    .total-row {
+        font-weight: bold;
+        font-size: 1rem;
+        color: var(--primary-color);
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .order-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .order-timing {
+        font-size: 0.8rem;
+        color: var(--text-light);
+    }
+    
+    .pagination {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    @media (max-width: 768px) {
+        .order-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .order-status-section {
+            text-align: left;
+        }
+        
+        .status-controls {
+            align-items: flex-start;
+        }
+        
+        .order-item {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .order-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .quick-action-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    // Handle status updates
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('status-select')) {
+            const orderId = e.target.dataset.orderId;
+            const newStatus = e.target.value;
+            updateOrderStatus(orderId, newStatus);
+        }
+    });
+    
+    // Handle quick action buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('quick-action-btn')) {
+            const orderId = e.target.dataset.orderId;
+            const action = e.target.dataset.action;
+            updateOrderStatus(orderId, action);
+        }
+    });
+    
+    async function updateOrderStatus(orderId, newStatus) {
+        try {
+            const response = await fetch('/api/orders/update-status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    order_id: orderId,
+                    status: newStatus
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showToast('Order status updated successfully!', 'success');
+                
+                // Update the UI
+                const orderCard = document.querySelector(`[data-order-id="${orderId}"]`).closest('.order-card');
+                const statusBadge = orderCard.querySelector('.status-badge');
+                const statusSelect = orderCard.querySelector('.status-select');
+                
+                // Update status badge
+                statusBadge.className = `status-badge status-${newStatus}`;
+                statusBadge.textContent = newStatus.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                
+                // Update select
+                statusSelect.value = newStatus;
+                
+                // Update quick action buttons
+                setTimeout(() => {
+                    location.reload(); // Refresh to show updated action buttons
+                }, 1000);
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error updating order status:', error);
+            showToast('Failed to update order status', 'error');
+        }
+    }
+    
+    // Auto-refresh for active orders every 30 seconds
+    setInterval(function() {
+        if (window.location.search.includes('status=pending') || 
+            window.location.search.includes('status=confirmed') || 
+            window.location.search.includes('status=preparing')) {
+            location.reload();
+        }
+    }, 30000);
+</script>
+{% endblock %}

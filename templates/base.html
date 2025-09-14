@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}JustEat - Food Delivery{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="{{ url_for('index') }}" class="logo">
+                <i class="fas fa-utensils"></i> JustEat
+            </a>
+            
+            {% if current_user.is_authenticated %}
+                <ul class="nav-links">
+                    {% if current_user.role == 'customer' %}
+                        <li><a href="{{ url_for('customer_dashboard') }}">Home</a></li>
+                        <li><a href="{{ url_for('browse_restaurants') }}">Restaurants</a></li>
+                        <li><a href="{{ url_for('order_history') }}">Orders</a></li>
+                        <li>
+                            <a href="{{ url_for('view_cart') }}" class="cart-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="cart-badge" style="display: none;">0</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li><a href="{{ url_for('restaurant_dashboard') }}">Dashboard</a></li>
+                        <li><a href="#" onclick="showManageMenuModal()">Menu</a></li>
+                        <li><a href="#" onclick="showOrdersModal()">Orders</a></li>
+                    {% endif %}
+                    
+                    <li class="user-menu">
+                        <div class="user-avatar" onclick="toggleUserMenu()">
+                            {{ current_user.username[0].upper() }}
+                        </div>
+                        <div class="user-dropdown" id="userDropdown" style="display: none;">
+                            <a href="#" onclick="showProfileModal()">Profile</a>
+                            <a href="{{ url_for('logout') }}">Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            {% else %}
+                <ul class="nav-links">
+                    <li><a href="{{ url_for('login') }}" class="btn btn-outline">Login</a></li>
+                </ul>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message toast {{ category }}">
+                            <span>{{ message }}</span>
+                            <button class="close" onclick="this.parentElement.remove()">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>JustEat</h3>
+                    <p>Delicious food delivered to your doorstep</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{{ url_for('index') }}">Home</a></li>
+                        <li><a href="{{ url_for('browse_restaurants') if current_user.is_authenticated and current_user.role == 'customer' else '#' }}">Restaurants</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 JustEat. All rights reserved to Aditya Singh.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+    
+    <style>
+        .footer {
+            background: var(--secondary-color);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3,
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-section ul li a:hover {
+            color: var(--primary-color);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 1rem;
+            text-align: center;
+            color: #ccc;
+        }
+        
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+            padding: 0.5rem 0;
+            min-width: 150px;
+            z-index: 1000;
+        }
+        
+        .user-dropdown a {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        
+        .user-dropdown a:hover {
+            background-color: var(--background-light);
+        }
+        
+        .flash-messages {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .flash-message {
+            margin-bottom: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .flash-message.success { border-left: 4px solid var(--primary-color); }
+        .flash-message.error { border-left: 4px solid #dc3545; }
+        .flash-message.warning { border-left: 4px solid #ffc107; }
+        .flash-message.info { border-left: 4px solid #17a2b8; }
+    </style>
+    
+    <script>
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const userMenu = document.querySelector('.user-menu');
+            const dropdown = document.getElementById('userDropdown');
+            
+            if (userMenu && !userMenu.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+
+{% block title %}Order #{{ order.id }} - JustEat{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    <div class="page-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Order #{{ order.id }}</h1>
+                <p class="text-secondary">{{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+            </div>
+            <span class="status-badge status-{{ order.status }}" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                {{ order.status.replace('_', ' ').title() }}
+            </span>
+        </div>
+    </div>
+
+    <div class="order-details-grid">
+        <!-- Restaurant Info -->
+        <div class="card restaurant-info-card mb-4">
+            <div class="card-header">
+                <h3>Restaurant</h3>
+            </div>
+            <div class="card-body">
+                <h4>{{ order.restaurant.name }}</h4>
+                <p class="text-secondary">{{ order.restaurant.cuisine_type }}</p>
+                <p><i class="fas fa-map-marker-alt"></i> {{ order.restaurant.address }}</p>
+                <p><i class="fas fa-phone"></i> {{ order.restaurant.phone }}</p>
+            </div>
+        </div>
+
+        <!-- Order Status Timeline -->
+        <div class="card order-timeline-card mb-4">
+            <div class="card-header">
+                <h3>Order Status</h3>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item {% if order.status in ['pending', 'confirmed', 'preparing', 'ready', 'delivered'] %}completed{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h5>Order Placed</h5>
+                            <p>{{ order.created_at.strftime('%I:%M %p') }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item {% if order.status in ['confirmed', 'preparing', 'ready', 'delivered'] %}completed{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h5>Order Confirmed</h5>
+                            <p>{% if order.status in ['confirmed', 'preparing', 'ready', 'delivered'] %}Confirmed{% else %}Pending{% endif %}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item {% if order.status in ['preparing', 'ready', 'delivered'] %}completed{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h5>Preparing</h5>
+                            <p>{% if order.status in ['preparing', 'ready', 'delivered'] %}In progress{% else %}Waiting{% endif %}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item {% if order.status in ['ready', 'delivered'] %}completed{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h5>Ready for Pickup</h5>
+                            <p>{% if order.status in ['ready', 'delivered'] %}Ready{% else %}Preparing{% endif %}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item {% if order.status == 'delivered' %}completed{% endif %}">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h5>Delivered</h5>
+                            <p>{% if order.status == 'delivered' %}Completed{% else %}In transit{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if order.status == 'delivered' %}
+                <div class="delivery-info mt-3">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        Your order has been delivered! We hope you enjoyed your meal.
+                    </div>
+                </div>
+                {% elif order.status == 'cancelled' %}
+                <div class="delivery-info mt-3">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-times-circle"></i>
+                        This order has been cancelled.
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="card order-items-card mb-4">
+            <div class="card-header">
+                <h3>Order Items</h3>
+            </div>
+            <div class="card-body">
+                <div class="order-items-list">
+                    {% for item in order.order_items %}
+                    <div class="order-item">
+                        <div class="item-info">
+                            <h4>{{ item.menu_item.name }}</h4>
+                            <p class="item-quantity">Quantity: {{ item.quantity }}</p>
+                            {% if item.special_instructions %}
+                            <p class="special-instructions">
+                                <i class="fas fa-sticky-note"></i>
+                                {{ item.special_instructions }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="item-price">
+                            <span class="unit-price">${{ "%.2f"|format(item.price) }} each</span>
+                            <span class="total-price">${{ "%.2f"|format(item.price * item.quantity) }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="card order-summary-card mb-4">
+            <div class="card-header">
+                <h3>Order Summary</h3>
+            </div>
+            <div class="card-body">
+                <div class="summary-details">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>${{ "%.2f"|format(order.total_amount - order.delivery_fee - order.tax_amount) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery Fee:</span>
+                        <span>${{ "%.2f"|format(order.delivery_fee) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax:</span>
+                        <span>${{ "%.2f"|format(order.tax_amount) }}</span>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span>Total:</span>
+                        <span>${{ "%.2f"|format(order.total_amount) }}</span>
+                    </div>
+                </div>
+                
+                {% if order.notes %}
+                <div class="order-notes mt-3">
+                    <h5>Order Notes:</h5>
+                    <p>{{ order.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="order-actions">
+            {% if order.status == 'delivered' %}
+            <button class="btn btn-outline review-btn" data-restaurant-id="{{ order.restaurant.id }}">
+                <i class="fas fa-star"></i> Leave Review
+            </button>
+            {% endif %}
+            
+            <button class="btn btn-primary reorder-btn" data-order-id="{{ order.id }}">
+                <i class="fas fa-redo"></i> Reorder
+            </button>
+            
+            <a href="{{ url_for('order_history') }}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Back to Orders
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .order-details-grid {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+    
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 1rem;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--border-color);
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+    
+    .timeline-marker {
+        position: absolute;
+        left: -1.5rem;
+        top: 0.5rem;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background: var(--border-color);
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px var(--border-color);
+    }
+    
+    .timeline-item.completed .timeline-marker {
+        background: var(--primary-color);
+        box-shadow: 0 0 0 2px var(--primary-color);
+    }
+    
+    .timeline-content h5 {
+        margin-bottom: 0.25rem;
+        color: var(--text-primary);
+    }
+    
+    .timeline-content p {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .order-item:last-child {
+        border-bottom: none;
+    }
+    
+    .item-info h4 {
+        margin-bottom: 0.5rem;
+    }
+    
+    .item-quantity {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .special-instructions {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        font-style: italic;
+        margin: 0;
+    }
+    
+    .item-price {
+        text-align: right;
+    }
+    
+    .unit-price {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+    }
+    
+    .total-price {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+    
+    .summary-details {
+        margin-bottom: 1rem;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .total-row {
+        font-weight: bold;
+        font-size: 1.1rem;
+        padding-top: 0.5rem;
+        border-top: 2px solid var(--border-color);
+        color: var(--primary-color);
+    }
+    
+    .order-notes {
+        background: var(--background-light);
+        padding: 1rem;
+        border-radius: var(--border-radius);
+    }
+    
+    .order-notes h5 {
+        margin-bottom: 0.5rem;
+    }
+    
+    .order-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .alert {
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .alert-danger {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    @media (max-width: 768px) {
+        .order-item {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .item-price {
+            text-align: left;
+        }
+        
+        .order-actions {
+            flex-direction: column;
+        }
+        
+        .timeline {
+            padding-left: 1.5rem;
+        }
+        
+        .timeline::before {
+            left: 0.75rem;
+        }
+        
+        .timeline-marker {
+            left: -1.25rem;
+        }
+    }
+</style>
+
+<script>
+    // Reuse the review and reorder functionality from orders.html
+    let currentRestaurantId = null;
+    let selectedRating = 0;
+    
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('review-btn')) {
+            currentRestaurantId = e.target.dataset.restaurantId;
+            selectedRating = 0;
+            // Show review modal (would need to include the modal HTML or redirect)
+            window.location.href = `{{ url_for('order_history') }}#review-${currentRestaurantId}`;
+        }
+        
+        if (e.target.classList.contains('reorder-btn')) {
+            const orderId = e.target.dataset.orderId;
+            reorderItems(orderId);
+        }
+    });
+    
+    async function reorderItems(orderId) {
+        try {
+            const response = await fetch('/api/orders/reorder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    order_id: orderId
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showToast('Items added to cart!', 'success');
+                window.cartManager.updateCartCount();
+            } else {
+                showToast(data.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error reordering:', error);
+            showToast('Failed to reorder items', 'error');
+        }
+    }
+    
+    // Auto-refresh order status every 30 seconds for active orders
+    {% if order.status not in ['delivered', 'cancelled'] %}
+    setInterval(function() {
+        location.reload();
+    }, 30000);
+    {% endif %}
+</script>
+{% endblock %}
