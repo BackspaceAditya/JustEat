@@ -3,6 +3,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from sqlalchemy import or_, func
+from models import db, User, Restaurant, MenuItem, Order, Review, Favorite, Cart
 import json
 import logging
 
@@ -205,6 +206,7 @@ def register_routes(app):
             search = request.args.get('search', '')
             cuisine = request.args.get('cuisine', '')
             sort_by = request.args.get('sort', 'rating')
+            diet_filter = request.args.get('diet', 'all')
             
             query = Restaurant.query.filter_by(is_active=True)
             
@@ -218,23 +220,64 @@ def register_routes(app):
             if cuisine:
                 query = query.filter_by(cuisine_type=cuisine)
             
-            if sort_by == 'rating':
-                query = query.order_by(Restaurant.rating.desc())
-            elif sort_by == 'delivery_time':
-                query = query.order_by(Restaurant.delivery_time.asc())
-            elif sort_by == 'delivery_fee':
-                query = query.order_by(Restaurant.delivery_fee.asc())
-            
             restaurants = query.all()
+            
+            # Filter by dietary preferences
+            if diet_filter == 'veg':
+                filtered_restaurants = []
+                for restaurant in restaurants:
+                    has_veg_items = MenuItem.query.filter_by(
+                        restaurant_id=restaurant.id,
+                        is_vegetarian=True,
+                        is_available=True
+                    ).first()
+                    if has_veg_items:
+                        filtered_restaurants.append(restaurant)
+                restaurants = filtered_restaurants
+            elif diet_filter == 'non_veg':
+                filtered_restaurants = []
+                for restaurant in restaurants:
+                    has_non_veg_items = MenuItem.query.filter_by(
+                        restaurant_id=restaurant.id,
+                        is_non_veg=True,
+                        is_available=True
+                    ).first()
+                    if has_non_veg_items:
+                        filtered_restaurants.append(restaurant)
+                restaurants = filtered_restaurants
+            
+            # Add distance calculation and sorting
+            user_lat = current_user.latitude
+            user_lng = current_user.longitude
+            
+            # Calculate distances for each restaurant
+            for restaurant in restaurants:
+                if user_lat and user_lng:
+                    restaurant.distance = restaurant.calculate_distance(user_lat, user_lng)
+                else:
+                    restaurant.distance = float('inf')
+            
+            # Sort restaurants
+            if sort_by == 'rating':
+                restaurants.sort(key=lambda x: x.get_average_rating(), reverse=True)
+            elif sort_by == 'delivery_time':
+                restaurants.sort(key=lambda x: x.delivery_time)
+            elif sort_by == 'delivery_fee':
+                restaurants.sort(key=lambda x: x.delivery_fee)
+            elif sort_by == 'distance':
+                restaurants.sort(key=lambda x: x.distance)
+            
             cuisines = db.session.query(Restaurant.cuisine_type).distinct().all()
             cuisines = [c[0] for c in cuisines]
             
             return render_template('customer/restaurants.html', 
                                  restaurants=restaurants, 
-                             cuisines=cuisines,
-                             current_search=search,
-                             current_cuisine=cuisine,
-                             current_sort=sort_by)
+                                 cuisines=cuisines,
+                                 current_search=search,
+                                 current_cuisine=cuisine,
+                                 current_sort=sort_by,
+                                 current_diet=diet_filter,
+                                 user_has_location=bool(user_lat and user_lng))
         except Exception as e:
             logger.error(f'Browse restaurants error: {str(e)}')
             flash('An error occurred loading restaurants', 'error')
@@ -433,6 +476,157 @@ def register_routes(app):
             logger.error(f'Cart count error: {str(e)}')
             return jsonify({'count': 0})
 
+    @app.route('/api/favorites/toggle', methods=['POST'])
+    @login_required
+    @role_required('customer')
+    def toggle_favorite():
+        try:
+            data = request.get_json()
+            restaurant_id = data.get('restaurant_id')
+            
+            favorite = Favorite.query.filter_by(customer_id=current_user.id, restaurant_id=restaurant_id).first()
+            
+            if favorite:
+                db.session.delete(favorite)
+                is_favorite = False
+                message = 'Removed from favorites'
+            else:
+                favorite = Favorite(customer_id=current_user.id, restaurant_id=restaurant_id)
+                db.session.add(favorite)
+                is_favorite = True
+                message = 'Added to favorites'
+            
+            db.session.commit()
+            return jsonify({'success': True, 'message': message, 'is_favorite': is_favorite})
+        except Exception as e:
+            logger.error(f'Toggle favorite error: {str(e)}')
+            return jsonify({'success': False, 'message': 'Error updating favorites'})
+
+    @app.route('/api/reviews/add', methods=['POST'])
+    @login_required
+    @role_required('customer')
+    def add_review():
+        try:
+            data = request.get_json()
+            restaurant_id = data.get('restaurant_id')
+            order_id = data.get('order_id')
+            rating = data.get('rating')
+            comment = data.get('comment', '')
+            
+            # Verify customer has completed order for this restaurant
+            order = Order.query.filter_by(
+                id=order_id,
+                customer_id=current_user.id,
+                restaurant_id=restaurant_id,
+                status='delivered'
+            ).first()
+            
+            if not order:
+                return jsonify({'success': False, 'message': 'You can only review restaurants where you have completed orders'})
+            
+            # Check if review already exists for this order
+            existing_review = Review.query.filter_by(order_id=order_id).first()
+            if existing_review:
+                return jsonify({'success': False, 'message': 'You have already reviewed this order'})
+            
+            review = Review(
+                customer_id=current_user.id,
+                restaurant_id=restaurant_id,
+                order_id=order_id,
+                rating=rating,
+                comment=comment
+            )
+            
+            db.session.add(review)
+            
+            # Update restaurant average rating
+            restaurant = Restaurant.query.get(restaurant_id)
+            restaurant.rating = restaurant.get_average_rating()
+            
+            db.session.commit()
+            
+            return jsonify({'success': True, 'message': 'Review added successfully'})
+        except Exception as e:
+            logger.error(f'Add review error: {str(e)}')
+            return jsonify({'success': False, 'message': 'Failed to add review'})
+
+    @app.route('/api/reviews/can-review/<int:restaurant_id>')
+    @login_required
+    @role_required('customer')
+    def can_review_restaurant(restaurant_id):
+        try:
+            # Get completed orders for this restaurant that haven't been reviewed
+            completed_orders = Order.query.filter_by(
+                customer_id=current_user.id,
+                restaurant_id=restaurant_id,
+                status='delivered'
+            ).all()
+            
+            reviewable_orders = []
+            for order in completed_orders:
+                existing_review = Review.query.filter_by(order_id=order.id).first()
+                if not existing_review:
+                    reviewable_orders.append({
+                        'order_id': order.id,
+                        'order_date': order.created_at.strftime('%Y-%m-%d %H:%M'),
+                        'total_amount': order.total_amount
+                    })
+            
+            return jsonify({
+                'can_review': len(reviewable_orders) > 0,
+                'reviewable_orders': reviewable_orders
+            })
+        except Exception as e:
+            logger.error(f'Can review check error: {str(e)}')
+            return jsonify({'can_review': False, 'reviewable_orders': []})
+
+    @app.route('/api/user/location', methods=['POST'])
+    @login_required
+    @role_required('customer')
+    def update_user_location():
+        try:
+            data = request.get_json()
+            latitude = data.get('latitude')
+            longitude = data.get('longitude')
+            address = data.get('address', '')
+            
+            if not latitude or not longitude:
+                return jsonify({'success': False, 'message': 'Location coordinates are required'})
+            
+            current_user.latitude = float(latitude)
+            current_user.longitude = float(longitude)
+            if address:
+                current_user.address = address
+            
+            db.session.commit()
+            
+            return jsonify({'success': True, 'message': 'Location updated successfully'})
+        except Exception as e:
+            logger.error(f'Update location error: {str(e)}')
+            return jsonify({'success': False, 'message': 'Failed to update location'})
+
+    @app.route('/api/user/preferences', methods=['POST'])
+    @login_required
+    @role_required('customer')
+    def update_user_preferences():
+        try:
+            data = request.get_json()
+            preferred_diet = data.get('preferred_diet', 'all')
+            dietary_restrictions = data.get('dietary_restrictions', '')
+            
+            if preferred_diet not in ['all', 'veg', 'non_veg']:
+                return jsonify({'success': False, 'message': 'Invalid dietary preference'})
+            
+            current_user.preferred_diet = preferred_diet
+            current_user.dietary_restrictions = dietary_restrictions
+            
+            db.session.commit()
+            
+            return jsonify({'success': True, 'message': 'Preferences updated successfully'})
+        except Exception as e:
+            logger.error(f'Update preferences error: {str(e)}')
+            return jsonify({'success': False, 'message': 'Failed to update preferences'})
+
 # Restaurant Owner Routes
 def register_restaurant_routes(app):
     @app.route('/restaurant/dashboard')
@@ -467,6 +661,81 @@ def register_restaurant_routes(app):
                                  total_orders=0,
                                  pending_orders=0,
                                  recent_orders=[])
+
+    @app.route('/restaurant/create', methods=['GET', 'POST'])
+    @login_required
+    @role_required('restaurant_owner')
+    def create_restaurant():
+        if request.method == 'POST':
+            try:
+                data = request.get_json() if request.is_json else request.form
+                
+                restaurant = Restaurant(
+                    name=data.get('name'),
+                    description=data.get('description'),
+                    cuisine_type=data.get('cuisine_type'),
+                    address=data.get('address'),
+                    phone=data.get('phone'),
+                    image_url=data.get('image_url'),
+                    delivery_time=int(data.get('delivery_time', 30)),
+                    delivery_fee=float(data.get('delivery_fee', 0)),
+                    minimum_order=float(data.get('minimum_order', 0)),
+                    latitude=float(data.get('latitude')) if data.get('latitude') else None,
+                    longitude=float(data.get('longitude')) if data.get('longitude') else None,
+                    owner_id=current_user.id
+                )
+                
+                db.session.add(restaurant)
+                db.session.commit()
+                
+                if request.is_json:
+                    return jsonify({'success': True, 'message': 'Restaurant created successfully!'})
+                else:
+                    flash('Restaurant created successfully!', 'success')
+                    return redirect(url_for('restaurant_dashboard'))
+                    
+            except Exception as e:
+                logger.error(f'Create restaurant error: {str(e)}')
+                if request.is_json:
+                    return jsonify({'success': False, 'message': 'Failed to create restaurant'})
+                else:
+                    flash('Failed to create restaurant', 'error')
+                    
+        return render_template('restaurant/create_restaurant.html')
+
+    @app.route('/api/restaurant/<int:restaurant_id>', methods=['PUT'])
+    @login_required
+    @role_required('restaurant_owner')
+    def update_restaurant(restaurant_id):
+        try:
+            restaurant = Restaurant.query.filter_by(id=restaurant_id, owner_id=current_user.id).first()
+            if not restaurant:
+                return jsonify({'success': False, 'message': 'Restaurant not found'})
+            
+            data = request.get_json()
+            
+            restaurant.name = data.get('name', restaurant.name)
+            restaurant.description = data.get('description', restaurant.description)
+            restaurant.cuisine_type = data.get('cuisine_type', restaurant.cuisine_type)
+            restaurant.address = data.get('address', restaurant.address)
+            restaurant.phone = data.get('phone', restaurant.phone)
+            restaurant.image_url = data.get('image_url', restaurant.image_url)
+            restaurant.delivery_time = int(data.get('delivery_time', restaurant.delivery_time))
+            restaurant.delivery_fee = float(data.get('delivery_fee', restaurant.delivery_fee))
+            restaurant.minimum_order = float(data.get('minimum_order', restaurant.minimum_order))
+            
+            if data.get('latitude'):
+                restaurant.latitude = float(data.get('latitude'))
+            if data.get('longitude'):
+                restaurant.longitude = float(data.get('longitude'))
+            
+            db.session.commit()
+            
+            return jsonify({'success': True, 'message': 'Restaurant updated successfully!'})
+            
+        except Exception as e:
+            logger.error(f'Update restaurant error: {str(e)}')
+            return jsonify({'success': False, 'message': 'Failed to update restaurant'})
 
     @app.route('/restaurant/orders')
     @login_required
@@ -506,13 +775,32 @@ def register_restaurant_routes(app):
                     return render_template('restaurant/menu_management.html', 
                                          restaurants=restaurants, 
                                          selected_restaurant=restaurant,
+                                         restaurant=restaurant,  # Add for backward compatibility
                                          menu_items=menu_items)
             
-            return render_template('restaurant/menu_management.html', restaurants=restaurants)
+            # If no restaurant_id provided, use the first restaurant or create a default
+            if restaurants:
+                restaurant = restaurants[0]
+                menu_items = MenuItem.query.filter_by(restaurant_id=restaurant.id).all()
+                return render_template('restaurant/menu_management.html', 
+                                     restaurants=restaurants, 
+                                     selected_restaurant=restaurant,
+                                     restaurant=restaurant,  # Add for backward compatibility
+                                     menu_items=menu_items)
+            else:
+                return render_template('restaurant/menu_management.html', 
+                                     restaurants=[], 
+                                     selected_restaurant=None,
+                                     restaurant=None,
+                                     menu_items=[])
         except Exception as e:
             logger.error(f'Menu management error: {str(e)}')
             flash('An error occurred loading menu management', 'error')
-            return render_template('restaurant/menu_management.html', restaurants=[])
+            return render_template('restaurant/menu_management.html', 
+                                 restaurants=[], 
+                                 selected_restaurant=None,
+                                 restaurant=None,
+                                 menu_items=[])
 
     @app.route('/api/orders/update-status', methods=['POST'])
     @login_required
@@ -538,6 +826,116 @@ def register_restaurant_routes(app):
         except Exception as e:
             logger.error(f'Update order status error: {str(e)}')
             return jsonify({'success': False, 'message': 'Failed to update order status'})
+
+    @app.route('/api/menu-item/add', methods=['POST'])
+    @login_required
+    @role_required('restaurant_owner')
+    def add_menu_item():
+        try:
+            data = request.get_json()
+            restaurant_id = data.get('restaurant_id')
+            
+            # Verify restaurant ownership
+            restaurant = Restaurant.query.filter_by(id=restaurant_id, owner_id=current_user.id).first()
+            if not restaurant:
+                return jsonify({'success': False, 'message': 'Restaurant not found or access denied'})
+            
+            menu_item = MenuItem(
+                name=data.get('name'),
+                description=data.get('description'),
+                price=float(data.get('price')),
+                category=data.get('category'),  # 'Food' or 'Beverage'
+                subcategory=data.get('subcategory'),  # For beverages: 'Alcoholic' or 'Non-Alcoholic'
+                food_type=data.get('food_type'),  # For food: 'Appetizer', 'Main Course', etc.
+                image_url=data.get('image_url'),
+                is_available=data.get('is_available', True),
+                is_special=data.get('is_special', False),
+                is_vegetarian=data.get('is_vegetarian', False),
+                is_vegan=data.get('is_vegan', False),
+                is_gluten_free=data.get('is_gluten_free', False),
+                is_non_veg=data.get('is_non_veg', False),
+                restaurant_id=restaurant_id
+            )
+            
+            db.session.add(menu_item)
+            db.session.commit()
+            
+            return jsonify({'success': True, 'message': 'Menu item added successfully!'})
+            
+        except Exception as e:
+            logger.error(f'Add menu item error: {str(e)}')
+            return jsonify({'success': False, 'message': 'Failed to add menu item'})
+
+    @app.route('/api/menu/update', methods=['POST'])
+    @login_required
+    @role_required('restaurant_owner')
+    def update_menu_item():
+        try:
+            data = request.get_json()
+            item_id = data.get('item_id')
+            
+            # Verify menu item ownership
+            menu_item = MenuItem.query.join(Restaurant).filter(
+                MenuItem.id == item_id,
+                Restaurant.owner_id == current_user.id
+            ).first()
+            
+            if not menu_item:
+                return jsonify({'success': False, 'message': 'Menu item not found'})
+            
+            # Update fields
+            if 'name' in data:
+                menu_item.name = data['name']
+            if 'description' in data:
+                menu_item.description = data['description']
+            if 'price' in data:
+                menu_item.price = data['price']
+            if 'category' in data:
+                menu_item.category = data['category']
+            if 'is_vegetarian' in data:
+                menu_item.is_vegetarian = data['is_vegetarian']
+            if 'is_vegan' in data:
+                menu_item.is_vegan = data['is_vegan']
+            if 'is_gluten_free' in data:
+                menu_item.is_gluten_free = data['is_gluten_free']
+            if 'is_non_veg' in data:
+                menu_item.is_non_veg = data['is_non_veg']
+            if 'is_special' in data:
+                menu_item.is_special = data['is_special']
+            if 'is_available' in data:
+                menu_item.is_available = data['is_available']
+            
+            db.session.commit()
+            
+            return jsonify({'success': True, 'message': 'Menu item updated successfully'})
+        except Exception as e:
+            logger.error(f'Update menu item error: {str(e)}')
+            return jsonify({'success': False, 'message': 'Failed to update menu item'})
+
+    @app.route('/api/menu/delete', methods=['POST'])
+    @login_required
+    @role_required('restaurant_owner')
+    def delete_menu_item():
+        try:
+            data = request.get_json()
+            item_id = data.get('item_id')
+            
+            # Verify menu item ownership
+            menu_item = MenuItem.query.join(Restaurant).filter(
+                MenuItem.id == item_id,
+                Restaurant.owner_id == current_user.id
+            ).first()
+            
+            if not menu_item:
+                return jsonify({'success': False, 'message': 'Menu item not found'})
+            
+            db.session.delete(menu_item)
+            db.session.commit()
+            
+            return jsonify({'success': True, 'message': 'Menu item deleted successfully'})
+        except Exception as e:
+            logger.error(f'Delete menu item error: {str(e)}')
+            return jsonify({'success': False, 'message': 'Failed to delete menu item'})
 
     # End of register_restaurant_routes function
 

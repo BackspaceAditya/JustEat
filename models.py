@@ -18,6 +18,9 @@ class User(UserMixin, db.Model):
     phone = db.Column(db.String(20))
     address = db.Column(db.Text)
     dietary_restrictions = db.Column(db.Text)
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    preferred_diet = db.Column(db.String(20), default='all')  # 'veg', 'non_veg', 'all'
     
     # Relationships
     restaurants = db.relationship('Restaurant', backref='owner', lazy=True)
@@ -41,11 +44,13 @@ class Restaurant(db.Model):
     delivery_fee = db.Column(db.Float, default=2.99)
     minimum_order = db.Column(db.Float, default=10.0)
     is_active = db.Column(db.Boolean, default=True)
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
-    menu_items = db.relationship('MenuItem', backref='restaurant', lazy=True, cascade='all, delete-orphan')
+    menu_items = db.relationship('MenuItem', back_populates='restaurant', lazy=True, cascade='all, delete-orphan')
     orders = db.relationship('Order', backref='restaurant', lazy=True)
     reviews = db.relationship('Review', backref='restaurant', lazy=True)
     favorites = db.relationship('Favorite', backref='restaurant', lazy=True)
@@ -56,38 +61,65 @@ class Restaurant(db.Model):
     def get_average_rating(self):
         avg_rating = db.session.query(func.avg(Review.rating)).filter_by(restaurant_id=self.id).scalar()
         return round(avg_rating, 1) if avg_rating else 0.0
+    
+    def calculate_distance(self, user_lat, user_lng):
+        """Calculate distance between restaurant and user in kilometers using Haversine formula"""
+        if not self.latitude or not self.longitude or not user_lat or not user_lng:
+            return float('inf')
+        
+        import math
+        
+        # Convert latitude and longitude from degrees to radians
+        lat1, lon1, lat2, lon2 = map(math.radians, [self.latitude, self.longitude, user_lat, user_lng])
+        
+        # Haversine formula
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+        a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+        c = 2 * math.asin(math.sqrt(a))
+        
+        # Radius of earth in kilometers
+        r = 6371
+        return round(c * r, 2)
 
 class MenuItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     price = db.Column(db.Float, nullable=False)
-    category = db.Column(db.String(50), nullable=False)
+    category = db.Column(db.String(50), nullable=False)  # 'Food' or 'Beverage'
+    subcategory = db.Column(db.String(50))  # For beverages: 'Alcoholic' or 'Non-Alcoholic'
+    food_type = db.Column(db.String(50))  # Appetizer, Main Course, Dessert, etc.
     image_url = db.Column(db.String(200))
     is_available = db.Column(db.Boolean, default=True)
-    is_special = db.Column(db.Boolean, default=False)  # Today's special or deal of the day
+    is_special = db.Column(db.Boolean, default=False)
     is_vegetarian = db.Column(db.Boolean, default=False)
     is_vegan = db.Column(db.Boolean, default=False)
     is_gluten_free = db.Column(db.Boolean, default=False)
+    is_non_veg = db.Column(db.Boolean, default=False)
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     order_count = db.Column(db.Integer, default=0)
     
     # Relationships
-    order_items = db.relationship('OrderItem', backref='menu_item', lazy=True)
+    restaurant = db.relationship('Restaurant', back_populates='menu_items')
     
     def __repr__(self):
         return f'<MenuItem {self.name}>'
     
     @property
     def is_mostly_ordered(self):
-        # Check if ordered more than 10 times today
-        today = datetime.utcnow().date()
-        today_orders = db.session.query(func.sum(OrderItem.quantity)).join(Order).filter(
-            OrderItem.menu_item_id == self.id,
-            func.date(Order.created_at) == today
-        ).scalar()
-        return (today_orders or 0) > 10
+        # Simple logic: if order count > 10, it's mostly ordered
+        return self.order_count > 10
+    
+    @property
+    def display_category(self):
+        """Get formatted category for display"""
+        if self.category == 'Beverage' and self.subcategory:
+            return f"{self.subcategory} Beverages"
+        elif self.category == 'Food' and self.food_type:
+            return self.food_type
+        return self.category
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -122,12 +154,26 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)  # Must have ordered to review
     rating = db.Column(db.Integer, nullable=False)  # 1-5 stars
     comment = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
+    # Relationships
+    order = db.relationship('Order', backref='reviews')
+    
     def __repr__(self):
         return f'<Review {self.id}>'
+    
+    @staticmethod
+    def can_review(customer_id, restaurant_id):
+        """Check if customer can review restaurant (must have completed order)"""
+        completed_order = Order.query.filter_by(
+            customer_id=customer_id,
+            restaurant_id=restaurant_id,
+            status='delivered'
+        ).first()
+        return completed_order is not None
 
 class Favorite(db.Model):
     id = db.Column(db.Integer, primary_key=True)

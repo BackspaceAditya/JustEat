@@ -4,10 +4,26 @@
 
 {% block content %}
 <div class="container" style="padding: 2rem 0;">
-    <div class="welcome-section mb-4">
+    <div class="page-header mb-4">
         <h1>Welcome back, {{ current_user.username }}!</h1>
-        <p class="text-secondary">What would you like to eat today?</p>
+        <p class="text-secondary">Discover delicious food from your favorite restaurants</p>
     </div>
+
+    <!-- Location Prompt -->
+    {% if not current_user.latitude or not current_user.longitude %}
+    <div class="alert alert-info mb-4">
+        <div class="alert-content">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+                <h4>Set Your Location</h4>
+                <p>Help us show you nearby restaurants and accurate delivery times!</p>
+                <button class="btn btn-primary btn-small" onclick="showLocationModal()">
+                    <i class="fas fa-location-arrow"></i> Set Location
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- Search Section -->
     <div class="search-section mb-4">
@@ -88,7 +104,7 @@
                     <div class="restaurant-meta">
                         <div class="rating">
                             <i class="fas fa-star star"></i>
-                            <span>{{ restaurant.rating }}</span>
+                            <span>{{ restaurant.get_average_rating() }}</span>
                         </div>
                         <span>{{ restaurant.delivery_time }} min</span>
                         <span>${{ "%.2f"|format(restaurant.delivery_fee) }} delivery</span>
@@ -139,7 +155,7 @@
                     <div class="restaurant-meta">
                         <div class="rating">
                             <i class="fas fa-star star"></i>
-                            <span>{{ restaurant.rating }}</span>
+                            <span>{{ restaurant.get_average_rating() }}</span>
                         </div>
                         <span>{{ restaurant.delivery_time }} min</span>
                         <span>${{ "%.2f"|format(restaurant.delivery_fee) }} delivery</span>

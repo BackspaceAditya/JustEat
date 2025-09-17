@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Create Restaurant - JustEat{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2rem 0;">
+    <div class="page-header mb-4">
+        <h1>Create New Restaurant</h1>
+        <p class="text-secondary">Add your restaurant to JustEat and start receiving orders</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form id="createRestaurantForm" method="POST">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Restaurant Name *</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Cuisine Type *</label>
+                            <select name="cuisine_type" class="form-control" required>
+                                <option value="">Select Cuisine</option>
+                                <option value="Italian">Italian</option>
+                                <option value="Chinese">Chinese</option>
+                                <option value="Indian">Indian</option>
+                                <option value="Mexican">Mexican</option>
+                                <option value="American">American</option>
+                                <option value="Thai">Thai</option>
+                                <option value="Japanese">Japanese</option>
+                                <option value="Mediterranean">Mediterranean</option>
+                                <option value="Fast Food">Fast Food</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="3" placeholder="Tell customers about your restaurant..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Address *</label>
+                    <textarea name="address" class="form-control" rows="2" required></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" name="phone" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Delivery Time (minutes) *</label>
+                            <input type="number" name="delivery_time" class="form-control" value="30" min="10" max="120" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Delivery Fee ($)</label>
+                            <input type="number" name="delivery_fee" class="form-control" value="0" min="0" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Minimum Order ($)</label>
+                            <input type="number" name="minimum_order" class="form-control" value="0" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Restaurant Image URL</label>
+                            <input type="url" name="image_url" class="form-control" placeholder="https://example.com/image.jpg">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Latitude (Optional)</label>
+                            <input type="number" name="latitude" class="form-control" step="any" placeholder="40.7128">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Longitude (Optional)</label>
+                            <input type="number" name="longitude" class="form-control" step="any" placeholder="-74.0060">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="location-helper mb-3">
+                    <button type="button" class="btn btn-outline" onclick="getCurrentLocation()">
+                        <i class="fas fa-location-arrow"></i> Use Current Location
+                    </button>
+                    <small class="text-muted ml-2">This helps customers find your restaurant and get accurate delivery estimates</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create Restaurant
+                    </button>
+                    <a href="{{ url_for('restaurant_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function getCurrentLocation() {
+    if (!navigator.geolocation) {
+        showToast('Geolocation is not supported by this browser', 'error');
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            document.querySelector('input[name="latitude"]').value = position.coords.latitude;
+            document.querySelector('input[name="longitude"]').value = position.coords.longitude;
+            showToast('Location captured successfully!', 'success');
+        },
+        function(error) {
+            showToast('Unable to get location: ' + error.message, 'error');
+        }
+    );
+}
+
+document.getElementById('createRestaurantForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    // Show loading state
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+    submitBtn.disabled = true;
+    
+    fetch('/restaurant/create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, 'success');
+            setTimeout(() => {
+                window.location.href = '/restaurant/dashboard';
+            }, 1000);
+        } else {
+            showToast(data.message, 'error');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('An error occurred while creating the restaurant', 'error');
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+</script>
+{% endblock %}

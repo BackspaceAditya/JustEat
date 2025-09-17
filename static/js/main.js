@@ -387,6 +387,133 @@ function createProfileModal() {
     return modal;
 }
 
+// Location Management
+async function requestLocation() {
+    if (!navigator.geolocation) {
+        showToast('Geolocation is not supported by this browser', 'error');
+        return;
+    }
+
+    try {
+        const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000
+            });
+        });
+
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        // Reverse geocoding to get address (simplified)
+        const address = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+
+        const response = await fetch('/api/user/location', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                latitude: latitude,
+                longitude: longitude,
+                address: address
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Location updated successfully!', 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error getting location:', error);
+        showToast('Failed to get location. Please try again.', 'error');
+    }
+}
+
+function showLocationModal() {
+    let modal = document.getElementById('locationModal');
+    if (!modal) {
+        modal = createLocationModal();
+        document.body.appendChild(modal);
+    }
+    ModalManager.show('locationModal');
+}
+
+function createLocationModal() {
+    const modal = document.createElement('div');
+    modal.id = 'locationModal';
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Set Your Location</h2>
+                <span class="close" onclick="ModalManager.hide('locationModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Setting your location helps us show you nearby restaurants and accurate delivery times.</p>
+                <div class="location-options">
+                    <button class="btn btn-primary" onclick="requestLocation()">
+                        <i class="fas fa-location-arrow"></i> Use Current Location
+                    </button>
+                    <div class="manual-location mt-3">
+                        <h4>Or enter manually:</h4>
+                        <input type="text" id="manualAddress" class="form-control" placeholder="Enter your address">
+                        <button class="btn btn-outline mt-2" onclick="setManualLocation()">Set Location</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    return modal;
+}
+
+async function setManualLocation() {
+    const address = document.getElementById('manualAddress').value.trim();
+    if (!address) {
+        showToast('Please enter an address', 'error');
+        return;
+    }
+
+    // For demo purposes, we'll use a simple geocoding simulation
+    // In a real app, you'd use Google Maps Geocoding API or similar
+    const mockCoords = {
+        latitude: 40.7128 + (Math.random() - 0.5) * 0.1,
+        longitude: -74.0060 + (Math.random() - 0.5) * 0.1
+    };
+
+    try {
+        const response = await fetch('/api/user/location', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                latitude: mockCoords.latitude,
+                longitude: mockCoords.longitude,
+                address: address
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Location updated successfully!', 'success');
+            ModalManager.hide('locationModal');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error setting location:', error);
+        showToast('Failed to set location', 'error');
+    }
+}
+
 // Export functions for global use
 window.showToast = showToast;
 window.ModalManager = ModalManager;
@@ -398,3 +525,6 @@ window.formatTime = formatTime;
 window.showProfileModal = showProfileModal;
 window.showManageMenuModal = showManageMenuModal;
 window.showOrdersModal = showOrdersModal;
+window.requestLocation = requestLocation;
+window.showLocationModal = showLocationModal;
+window.setManualLocation = setManualLocation;

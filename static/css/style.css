@@ -282,6 +282,11 @@ body {
     color: #2e7d32;
 }
 
+.badge-non-veg {
+    background: #ffebee;
+    color: #c62828;
+}
+
 .badge-special {
     background: #fff3e0;
     color: #f57c00;
@@ -290,6 +295,182 @@ body {
 .badge-popular {
     background: #e3f2fd;
     color: #1976d2;
+}
+
+/* Location modal and alert styling */
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    margin-bottom: 1rem;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.alert-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.alert-content i {
+    font-size: 1.5rem;
+    margin-top: 0.25rem;
+    color: #17a2b8;
+}
+
+.alert-content h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.alert-content p {
+    margin: 0 0 0.75rem 0;
+    color: #0c5460;
+}
+
+.location-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.manual-location {
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.manual-location h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: #495057;
+}
+
+.manual-location .form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.manual-location .form-control:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Responsive location modal */
+@media (max-width: 768px) {
+    .alert-content {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .alert-content i {
+        align-self: center;
+    }
+    
+    .location-options {
+        gap: 0.75rem;
+    }
+}
+
+/* Menu category and subcategory styling */
+.subcategory-section {
+    margin-bottom: 2rem;
+}
+
+.subcategory-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.category-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 3px solid var(--primary-color);
+}
+
+/* Restaurant creation form styling */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.location-helper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.col-md-4, .col-md-6 {
+    flex: 1;
+}
+
+.col-md-4 {
+    flex: 0 0 33.333%;
+}
+
+.col-md-6 {
+    flex: 0 0 50%;
+}
+
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .col-md-4, .col-md-6 {
+        flex: none;
+        width: 100%;
+    }
+}
+
+/* Header styling for dashboard */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
 }
 
 /* Form Styles */

@@ -29,10 +29,19 @@
                     {% endfor %}
                 </select>
                 
+                <select id="diet-filter" class="chip">
+                    <option value="all" {% if current_diet == 'all' %}selected{% endif %}>All Food</option>
+                    <option value="veg" {% if current_diet == 'veg' %}selected{% endif %}>Vegetarian</option>
+                    <option value="non_veg" {% if current_diet == 'non_veg' %}selected{% endif %}>Non-Vegetarian</option>
+                </select>
+                
                 <select id="sort-filter" class="chip">
                     <option value="rating" {% if current_sort == 'rating' %}selected{% endif %}>Highest Rated</option>
                     <option value="delivery_time" {% if current_sort == 'delivery_time' %}selected{% endif %}>Fastest Delivery</option>
                     <option value="delivery_fee" {% if current_sort == 'delivery_fee' %}selected{% endif %}>Lowest Delivery Fee</option>
+                    {% if user_has_location %}
+                    <option value="distance" {% if current_sort == 'distance' %}selected{% endif %}>Nearest to Me</option>
+                    {% endif %}
                 </select>
             </div>
         </div>
@@ -76,6 +85,12 @@
                             <i class="fas fa-truck"></i>
                             <span>${{ "%.2f"|format(restaurant.delivery_fee) }}</span>
                         </div>
+                        {% if restaurant.distance != float('inf') %}
+                        <div class="distance">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ "%.1f"|format(restaurant.distance) }} km</span>
+                        </div>
+                        {% endif %}
                     </div>
                     
                     <div class="restaurant-footer">
@@ -223,6 +238,7 @@
         // Set up filter change handlers
         const searchInput = document.getElementById('search-input');
         const cuisineFilter = document.getElementById('cuisine-filter');
+        const dietFilter = document.getElementById('diet-filter');
         const sortFilter = document.getElementById('sort-filter');
         
         function applyFilters() {
@@ -234,6 +250,10 @@
             
             if (cuisineFilter.value) {
                 params.append('cuisine', cuisineFilter.value);
+            }
+            
+            if (dietFilter.value && dietFilter.value !== 'all') {
+                params.append('diet', dietFilter.value);
             }
             
             if (sortFilter.value) {
@@ -252,6 +272,7 @@
         
         // Immediate filter changes
         cuisineFilter.addEventListener('change', applyFilters);
+        dietFilter.addEventListener('change', applyFilters);
         sortFilter.addEventListener('change', applyFilters);
         
         // Enter key search

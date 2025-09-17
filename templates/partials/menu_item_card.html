@@ -1,0 +1,37 @@
+<div class="menu-item" onclick="showItemModal({{ item.id }})">
+    <div class="menu-item-info">
+        <h3 class="menu-item-name">
+            {{ item.name }}
+            {% if item.is_mostly_ordered %}
+            <span class="badge badge-popular">Mostly Ordered</span>
+            {% endif %}
+            {% if item.is_special %}
+            <span class="badge badge-special">Special</span>
+            {% endif %}
+        </h3>
+        <p class="menu-item-description">{{ item.description }}</p>
+        <div class="menu-item-badges">
+            {% if item.is_vegetarian %}
+            <span class="badge badge-vegetarian">Vegetarian</span>
+            {% endif %}
+            {% if item.is_vegan %}
+            <span class="badge badge-vegetarian">Vegan</span>
+            {% endif %}
+            {% if item.is_gluten_free %}
+            <span class="badge badge-vegetarian">Gluten Free</span>
+            {% endif %}
+            {% if item.is_non_veg %}
+            <span class="badge badge-non-veg">Non-Veg</span>
+            {% endif %}
+        </div>
+        <div class="menu-item-footer">
+            <span class="menu-item-price">${{ "%.2f"|format(item.price) }}</span>
+            <button class="btn btn-small btn-primary add-to-cart-btn" 
+                    data-menu-item-id="{{ item.id }}" 
+                    data-quantity="1"
+                    onclick="event.stopPropagation();">
+                Add to Cart
+            </button>
+        </div>
+    </div>
+</div>

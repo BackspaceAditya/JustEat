@@ -5,8 +5,17 @@
 {% block content %}
 <div class="container" style="padding: 2rem 0;">
     <div class="page-header mb-4">
-        <h1>Restaurant Dashboard</h1>
-        <p class="text-secondary">Manage your restaurants and orders</p>
+        <div class="header-content">
+            <div>
+                <h1>Restaurant Dashboard</h1>
+                <p class="text-secondary">Manage your restaurants and orders</p>
+            </div>
+            <div class="header-actions">
+                <a href="{{ url_for('create_restaurant') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Restaurant
+                </a>
+            </div>
+        </div>
     </div>
 
     <!-- Statistics Cards -->

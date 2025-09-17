@@ -3,6 +3,13 @@
 {% block title %}Menu Management - JustEat{% endblock %}
 
 {% block content %}
+<script type="application/json" id="restaurant-data">
+    {% if restaurant %}
+        {{ restaurant|tojson }}
+    {% else %}
+        null
+    {% endif %}
+</script>
 <div class="container" style="padding: 2rem 0;">
     <div class="page-header mb-4">
         <h1>Menu Management</h1>
@@ -71,6 +78,9 @@
                                     {% endif %}
                                     {% if item.is_vegetarian %}
                                     <span class="badge badge-vegetarian">Vegetarian</span>
+                                    {% endif %}
+                                    {% if item.is_non_veg %}
+                                    <span class="badge badge-non-veg">Non-Veg</span>
                                     {% endif %}
                                 </div>
                             </div>
@@ -154,10 +164,35 @@
                         <input type="number" id="itemPrice" class="form-control" step="0.01" min="0" required>
                     </div>
                     
-                    <div class="form-group" style="flex: 1;">
-                        <label for="itemCategory" class="form-label">Category *</label>
-                        <input type="text" id="itemCategory" class="form-control" required>
+                    <div class="form-group">
+                        <label class="form-label">Main Category</label>
+                        <select id="itemCategory" class="form-control" required onchange="updateSubcategories()">
+                            <option value="">Select Category</option>
+                            <option value="Food">Food</option>
+                            <option value="Beverage">Beverage</option>
+                        </select>
                     </div>
+                </div>
+                
+                <div class="form-group" id="foodTypeGroup" style="display: none;">
+                    <label class="form-label">Food Type</label>
+                    <select id="itemFoodType" class="form-control">
+                        <option value="">Select Food Type</option>
+                        <option value="Appetizer">Appetizer</option>
+                        <option value="Main Course">Main Course</option>
+                        <option value="Dessert">Dessert</option>
+                        <option value="Side Dish">Side Dish</option>
+                        <option value="Snack">Snack</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="beverageTypeGroup" style="display: none;">
+                    <label class="form-label">Beverage Type</label>
+                    <select id="itemSubcategory" class="form-control">
+                        <option value="">Select Beverage Type</option>
+                        <option value="Non-Alcoholic">Non-Alcoholic</option>
+                        <option value="Alcoholic">Alcoholic</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
@@ -174,6 +209,10 @@
                         <label class="checkbox-label">
                             <input type="checkbox" id="isGlutenFree">
                             <span>Gluten Free</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="isNonVeg">
+                            <span>Non-Vegetarian</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" id="isSpecial">
@@ -316,9 +355,32 @@
     }
 </style>
 
+<!-- Restaurant data for JavaScript -->
+<script type="application/json" id="restaurant-data">
+{% if restaurant %}
+{"id": {{ restaurant.id }}}
+{% else %}
+null
+{% endif %}
+</script>
+
 <script>
+    // Parse restaurant data from JSON script tag
+    const restaurantDataScript = document.getElementById('restaurant-data');
+    window.restaurantData = restaurantDataScript ? JSON.parse(restaurantDataScript.textContent) : null;
+    
     let currentItemId = null;
-    let currentRestaurantId = {{ restaurant.id if restaurant else 'null' }};
+    let currentRestaurantId = null;
+    
+    // Safely get restaurant data
+    try {
+        const restaurantDataElement = document.getElementById('restaurant-data');
+        const restaurantData = JSON.parse(restaurantDataElement.textContent);
+        currentRestaurantId = restaurantData ? restaurantData.id : null;
+    } catch (e) {
+        console.warn('Could not parse restaurant data:', e);
+        currentRestaurantId = null;
+    }
     
     function changeRestaurant() {
         const select = document.getElementById('restaurantSelect');
@@ -367,60 +429,98 @@
         // Set checkboxes based on badges
         const badges = itemCard.querySelectorAll('.badge');
         document.getElementById('isVegetarian').checked = Array.from(badges).some(b => b.textContent === 'Vegetarian');
+        document.getElementById('isNonVeg').checked = Array.from(badges).some(b => b.textContent === 'Non-Veg');
         document.getElementById('isSpecial').checked = Array.from(badges).some(b => b.textContent === 'Special');
         document.getElementById('isAvailable').checked = !Array.from(badges).some(b => b.textContent === 'Unavailable');
         
         ModalManager.show('itemModal');
     }
     
-    async function saveMenuItem() {
-        if (!validateForm('itemForm')) {
+    function updateSubcategories() {
+        const category = document.getElementById('itemCategory').value;
+        const foodTypeGroup = document.getElementById('foodTypeGroup');
+        const beverageTypeGroup = document.getElementById('beverageTypeGroup');
+        
+        if (category === 'Food') {
+            foodTypeGroup.style.display = 'block';
+            beverageTypeGroup.style.display = 'none';
+            document.getElementById('itemSubcategory').value = '';
+        } else if (category === 'Beverage') {
+            foodTypeGroup.style.display = 'none';
+            beverageTypeGroup.style.display = 'block';
+            document.getElementById('itemFoodType').value = '';
+        } else {
+            foodTypeGroup.style.display = 'none';
+            beverageTypeGroup.style.display = 'none';
+            document.getElementById('itemFoodType').value = '';
+            document.getElementById('itemSubcategory').value = '';
+        }
+    }
+
+    function saveMenuItem() {
+        const itemId = document.getElementById('itemId').value;
+        const name = document.getElementById('itemName').value;
+        const description = document.getElementById('itemDescription').value;
+        const price = document.getElementById('itemPrice').value;
+        const category = document.getElementById('itemCategory').value;
+        const subcategory = document.getElementById('itemSubcategory').value;
+        const foodType = document.getElementById('itemFoodType').value;
+        const imageUrl = document.getElementById('itemImageUrl').value;
+        const isVegetarian = document.getElementById('isVegetarian').checked;
+        const isVegan = document.getElementById('isVegan').checked;
+        const isGlutenFree = document.getElementById('isGlutenFree').checked;
+        const isNonVeg = document.getElementById('isNonVeg').checked;
+        const isSpecial = document.getElementById('isSpecial').checked;
+        const isAvailable = document.getElementById('isAvailable').checked;
+
+        if (!name || !price || !category) {
+            alert('Please fill in all required fields');
             return;
         }
-        
-        const formData = {
-            name: document.getElementById('itemName').value,
-            description: document.getElementById('itemDescription').value,
-            price: parseFloat(document.getElementById('itemPrice').value),
-            category: document.getElementById('itemCategory').value,
-            is_vegetarian: document.getElementById('isVegetarian').checked,
-            is_vegan: document.getElementById('isVegan').checked,
-            is_gluten_free: document.getElementById('isGlutenFree').checked,
-            is_special: document.getElementById('isSpecial').checked,
-            is_available: document.getElementById('isAvailable').checked
+
+        const data = {
+            name: name,
+            description: description,
+            price: parseFloat(price),
+            category: category,
+            subcategory: subcategory,
+            food_type: foodType,
+            image_url: imageUrl,
+            is_vegetarian: isVegetarian,
+            is_vegan: isVegan,
+            is_gluten_free: isGlutenFree,
+            is_non_veg: isNonVeg,
+            is_special: isSpecial,
+            is_available: isAvailable,
+            restaurant_id: window.restaurantData ? window.restaurantData.id : null
         };
-        
-        try {
-            let url, method;
-            if (currentItemId) {
-                url = '/api/menu/update';
-                formData.item_id = currentItemId;
-            } else {
-                url = '/api/menu/add';
-                formData.restaurant_id = currentRestaurantId;
-            }
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                showToast(data.message, 'success');
-                ModalManager.hide('itemModal');
-                setTimeout(() => location.reload(), 1000);
-            } else {
-                showToast(data.message, 'error');
-            }
-        } catch (error) {
-            console.error('Error saving menu item:', error);
-            showToast('Failed to save menu item', 'error');
+
+        const url = itemId ? '/api/menu/update' : '/api/menu-item/add';
+        if (itemId) {
+            data.item_id = parseInt(itemId);
         }
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Menu item saved successfully!');
+                closeModal();
+                location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while saving the menu item');
+        });
     }
     
     // Event handlers

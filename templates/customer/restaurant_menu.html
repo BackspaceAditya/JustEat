@@ -68,47 +68,56 @@
         <div class="category-section" id="category-{{ category }}" 
              {% if not loop.first %}style="display: none;"{% endif %}>
             <h2 class="category-title">{{ category }}</h2>
-            <div class="menu-items">
-                {% for item in items %}
-                <div class="menu-item" onclick="showItemModal({{ item.id }})">
-                    <div class="menu-item-info">
-                        <h3 class="menu-item-name">
-                            {{ item.name }}
-                            {% if item.is_mostly_ordered %}
-                            <span class="badge badge-popular">Mostly Ordered</span>
-                            {% endif %}
-                            {% if item.is_special %}
-                            <span class="badge badge-special">Special</span>
-                            {% endif %}
-                        </h3>
-                        <p class="menu-item-description">{{ item.description }}</p>
-                        <div class="menu-item-badges">
-                            {% if item.is_vegetarian %}
-                            <span class="badge badge-vegetarian">Vegetarian</span>
-                            {% endif %}
-                            {% if item.is_vegan %}
-                            <span class="badge badge-vegetarian">Vegan</span>
-                            {% endif %}
-                            {% if item.is_gluten_free %}
-                            <span class="badge badge-vegetarian">Gluten Free</span>
-                            {% endif %}
-                        </div>
-                        <div class="menu-item-footer">
-                            <span class="menu-item-price">${{ "%.2f"|format(item.price) }}</span>
-                            <button class="btn btn-small btn-primary add-to-cart-btn" 
-                                    data-menu-item-id="{{ item.id }}" 
-                                    data-quantity="1"
-                                    onclick="event.stopPropagation();">
-                                Add to Cart
-                            </button>
+            
+            {% if category == 'Food' %}
+                {% set food_types = items|groupby('food_type') %}
+                {% for food_type, food_items in food_types %}
+                    {% if food_type %}
+                    <div class="subcategory-section">
+                        <h3 class="subcategory-title">{{ food_type }}</h3>
+                        <div class="menu-items">
+                            {% for item in food_items %}
+                            {% include 'partials/menu_item_card.html' %}
+                            {% endfor %}
                         </div>
                     </div>
-                    {% if item.image_url %}
-                    <img src="{{ item.image_url }}" alt="{{ item.name }}" class="menu-item-image">
+                    {% else %}
+                    <div class="menu-items">
+                        {% for item in food_items %}
+                        {% include 'partials/menu_item_card.html' %}
+                        {% endfor %}
+                    </div>
                     {% endif %}
-                </div>
+                {% endfor %}
+            
+            {% elif category == 'Beverage' %}
+                {% set beverage_types = items|groupby('subcategory') %}
+                {% for beverage_type, beverage_items in beverage_types %}
+                    {% if beverage_type %}
+                    <div class="subcategory-section">
+                        <h3 class="subcategory-title">{{ beverage_type }} Beverages</h3>
+                        <div class="menu-items">
+                            {% for item in beverage_items %}
+                            {% include 'partials/menu_item_card.html' %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="menu-items">
+                        {% for item in beverage_items %}
+                        {% include 'partials/menu_item_card.html' %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            
+            {% else %}
+            <div class="menu-items">
+                {% for item in items %}
+                {% include 'partials/menu_item_card.html' %}
                 {% endfor %}
             </div>
+            {% endif %}
         </div>
         {% endfor %}
     </div>

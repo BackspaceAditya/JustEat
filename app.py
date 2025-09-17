@@ -33,9 +33,10 @@ def create_app():
         from models import User
         return User.query.get(int(user_id))
 
-    # Import models and routes
-    from routes import register_routes
-    register_routes(app)
+    # Import routes
+    from routes import register_routes, register_restaurant_routes
+    register_routes(app)              # customer + auth routes
+    register_restaurant_routes(app)   # restaurant owner routes
 
     return app
 
