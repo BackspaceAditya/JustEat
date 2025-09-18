@@ -1391,3 +1391,342 @@
 2025-09-17 23:02:09,871 INFO werkzeug 127.0.0.1 - - [17/Sep/2025 23:02:09] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
 2025-09-17 23:02:14,153 INFO werkzeug  * Detected change in 'D:\\FoodApp Project\\routes.py', reloading
 2025-09-17 23:02:14,274 INFO werkzeug  * Restarting with stat
+2025-09-18 10:59:33,310 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-09-18 10:59:33,311 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-09-18 10:59:33,315 INFO werkzeug  * Restarting with stat
+2025-09-18 10:59:34,628 WARNING werkzeug  * Debugger is active!
+2025-09-18 10:59:34,633 INFO werkzeug  * Debugger PIN: 775-477-527
+2025-09-18 10:59:37,607 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:37] "[32mGET / HTTP/1.1[0m" 302 -
+2025-09-18 10:59:37,876 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:37] "GET /restaurant/dashboard HTTP/1.1" 200 -
+2025-09-18 10:59:38,070 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:38] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-09-18 10:59:38,110 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:38] "GET /static/js/main.js HTTP/1.1" 200 -
+2025-09-18 10:59:38,243 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:38] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 10:59:38,255 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:38] "GET /static/favicon.ico HTTP/1.1" 200 -
+2025-09-18 10:59:54,079 INFO routes User pizza_palace_owner logged out
+2025-09-18 10:59:54,082 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:54] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-09-18 10:59:54,162 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:54] "GET / HTTP/1.1" 200 -
+2025-09-18 10:59:54,237 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:54] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 10:59:54,245 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:54] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 10:59:54,281 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:54] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 10:59:54,301 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:54] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 10:59:56,834 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:56] "GET /login HTTP/1.1" 200 -
+2025-09-18 10:59:56,881 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:56] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 10:59:56,887 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:56] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 10:59:56,931 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:56] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 10:59:56,944 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 10:59:56] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:00:01,507 INFO routes Login attempt for username: john_doe
+2025-09-18 11:00:01,516 INFO routes User found in database: True
+2025-09-18 11:00:01,830 INFO routes Password valid for john_doe: True
+2025-09-18 11:00:01,831 INFO routes Flask-Login login_user result: True
+2025-09-18 11:00:01,832 INFO routes User john_doe logged in successfully
+2025-09-18 11:00:01,835 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:00:01] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-18 11:00:02,031 ERROR routes Customer dashboard error: 'models.Restaurant object' has no attribute 'restaurant'
+2025-09-18 11:00:02,034 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:00:02] "GET /customer/dashboard HTTP/1.1" 200 -
+2025-09-18 11:00:02,095 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:00:02] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:00:02,111 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:00:02] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:00:02,143 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:00:02] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:00:02,153 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:00:02] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:00:04,808 ERROR routes Browse restaurants error: 'float' is undefined
+2025-09-18 11:00:04,814 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:00:04] "GET /customer/restaurants HTTP/1.1" 200 -
+2025-09-18 11:00:04,871 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:00:04] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:00:04,892 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:00:04] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:00:04,918 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:00:04] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:00:04,935 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:00:04] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:00:07,789 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:00:07] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:03:25,581 INFO werkzeug  * Detected change in 'C:\\Users\\adityasingh04\\Pictures\\JustEat\\create_demo_users.py', reloading
+2025-09-18 11:03:25,854 INFO werkzeug  * Restarting with stat
+2025-09-18 11:03:27,380 WARNING werkzeug  * Debugger is active!
+2025-09-18 11:03:27,386 INFO werkzeug  * Debugger PIN: 775-477-527
+2025-09-18 11:03:40,998 INFO werkzeug  * Detected change in 'C:\\Users\\adityasingh04\\Pictures\\JustEat\\create_demo_users.py', reloading
+2025-09-18 11:03:41,236 INFO werkzeug  * Restarting with stat
+2025-09-18 11:03:43,491 WARNING werkzeug  * Debugger is active!
+2025-09-18 11:03:43,496 INFO werkzeug  * Debugger PIN: 775-477-527
+2025-09-18 11:03:48,600 ERROR routes Customer dashboard error: 'models.Restaurant object' has no attribute 'restaurant'
+2025-09-18 11:03:48,605 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:03:48] "GET /customer/dashboard HTTP/1.1" 200 -
+2025-09-18 11:03:48,814 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:03:48] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:03:48,814 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:03:48] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:03:48,859 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:03:48] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:03:48,860 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:03:48] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:03:53,066 INFO routes User john_doe logged out
+2025-09-18 11:03:53,069 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:03:53] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-09-18 11:03:53,104 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:03:53] "GET / HTTP/1.1" 200 -
+2025-09-18 11:03:53,170 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:03:53] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:03:53,187 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:03:53] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:03:53,208 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:03:53] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:03:53,227 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:03:53] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:04:09,293 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:04:09] "GET /login HTTP/1.1" 200 -
+2025-09-18 11:04:09,354 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:04:09] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:04:09,363 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:04:09] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:04:09,387 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:04:09] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:04:09,413 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:04:09] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:04:16,100 INFO routes Login attempt for username: john_doe
+2025-09-18 11:04:16,109 INFO routes User found in database: True
+2025-09-18 11:04:16,434 INFO routes Password valid for john_doe: True
+2025-09-18 11:04:16,435 INFO routes Flask-Login login_user result: True
+2025-09-18 11:04:16,435 INFO routes User john_doe logged in successfully
+2025-09-18 11:04:16,437 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:04:16] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-18 11:04:16,470 ERROR routes Customer dashboard error: 'models.Restaurant object' has no attribute 'restaurant'
+2025-09-18 11:04:16,476 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:04:16] "GET /customer/dashboard HTTP/1.1" 200 -
+2025-09-18 11:04:16,539 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:04:16] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:04:16,561 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:04:16] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:04:16,597 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:04:16] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:04:16,603 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:04:16] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:05:02,984 INFO werkzeug  * Detected change in 'C:\\Users\\adityasingh04\\Pictures\\JustEat\\create_demo_users.py', reloading
+2025-09-18 11:05:03,201 INFO werkzeug  * Restarting with stat
+2025-09-18 11:05:05,435 WARNING werkzeug  * Debugger is active!
+2025-09-18 11:05:05,441 INFO werkzeug  * Debugger PIN: 775-477-527
+2025-09-18 11:05:14,889 ERROR routes Customer dashboard error: 'models.Restaurant object' has no attribute 'restaurant'
+2025-09-18 11:05:14,893 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:14] "GET /customer/dashboard HTTP/1.1" 200 -
+2025-09-18 11:05:15,062 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:15] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:05:15,066 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:15] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:05:15,098 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:15] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:05:15,103 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:15] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:05:18,540 INFO routes User john_doe logged out
+2025-09-18 11:05:18,543 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:18] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-09-18 11:05:18,580 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:18] "GET / HTTP/1.1" 200 -
+2025-09-18 11:05:18,639 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:18] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:05:18,660 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:18] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:05:18,675 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:18] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:05:18,694 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:18] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:05:21,926 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:21] "GET /login HTTP/1.1" 200 -
+2025-09-18 11:05:21,980 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:21] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:05:21,989 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:21] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:05:22,014 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:22] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:05:22,028 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:05:22] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:06:45,853 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-09-18 11:06:45,854 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-09-18 11:06:45,858 INFO werkzeug  * Restarting with stat
+2025-09-18 11:06:47,285 WARNING werkzeug  * Debugger is active!
+2025-09-18 11:06:47,290 INFO werkzeug  * Debugger PIN: 775-477-527
+2025-09-18 11:06:49,613 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:49] "GET / HTTP/1.1" 200 -
+2025-09-18 11:06:49,784 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:49] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:06:49,785 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:49] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:06:49,943 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:49] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:06:49,959 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:49] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:06:51,643 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:51] "GET /login HTTP/1.1" 200 -
+2025-09-18 11:06:51,699 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:51] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:06:51,721 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:51] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:06:51,765 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:51] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:06:51,784 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:51] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:06:58,125 INFO routes Login attempt for username: john_doe
+2025-09-18 11:06:58,247 INFO routes User found in database: True
+2025-09-18 11:06:58,530 INFO routes Password valid for john_doe: True
+2025-09-18 11:06:58,532 INFO routes Flask-Login login_user result: True
+2025-09-18 11:06:58,533 INFO routes User john_doe logged in successfully
+2025-09-18 11:06:58,536 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:58] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-18 11:06:58,641 ERROR routes Customer dashboard error: 'models.Restaurant object' has no attribute 'restaurant'
+2025-09-18 11:06:58,645 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:58] "GET /customer/dashboard HTTP/1.1" 200 -
+2025-09-18 11:06:58,724 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:58] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:06:58,733 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:58] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:06:58,790 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:58] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:06:58,796 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:06:58] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:07:03,051 INFO routes User john_doe logged out
+2025-09-18 11:07:03,054 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:03] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-09-18 11:07:03,075 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:03] "GET / HTTP/1.1" 200 -
+2025-09-18 11:07:03,132 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:03] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:07:03,153 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:03] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:07:03,172 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:03] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:07:03,185 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:03] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:07:06,154 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:06] "GET /login HTTP/1.1" 200 -
+2025-09-18 11:07:06,223 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:06] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:07:06,240 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:06] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:07:06,259 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:06] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:07:06,276 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:06] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:07:11,908 INFO routes Login attempt for username: burger_barn_owner
+2025-09-18 11:07:11,915 INFO routes User found in database: True
+2025-09-18 11:07:12,186 INFO routes Password valid for burger_barn_owner: True
+2025-09-18 11:07:12,187 INFO routes Flask-Login login_user result: True
+2025-09-18 11:07:12,189 INFO routes User burger_barn_owner logged in successfully
+2025-09-18 11:07:12,191 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:12] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-18 11:07:12,285 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:12] "GET /restaurant/dashboard HTTP/1.1" 200 -
+2025-09-18 11:07:12,360 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:12] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:07:12,368 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:12] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:07:12,409 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:12] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:07:12,416 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:12] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:07:16,060 ERROR routes Menu management error: Object of type Restaurant is not JSON serializable
+2025-09-18 11:07:16,063 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:16] "GET /restaurant/menu HTTP/1.1" 200 -
+2025-09-18 11:07:16,133 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:16] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:07:16,145 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:16] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:07:16,168 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:16] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:07:16,185 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:16] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:07:21,459 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:21] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:07:26,923 ERROR routes Menu management error: Object of type Restaurant is not JSON serializable
+2025-09-18 11:07:26,927 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:26] "GET /restaurant/menu?restaurant_id=2 HTTP/1.1" 200 -
+2025-09-18 11:07:26,991 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:26] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:07:27,010 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:27] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:07:27,033 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:27] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:07:27,041 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:27] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:07:29,214 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:29] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:07:31,197 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:31] "GET /restaurant/orders?restaurant_id=2 HTTP/1.1" 200 -
+2025-09-18 11:07:31,275 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:31] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:07:31,295 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:31] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:07:31,317 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:31] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:07:31,333 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:31] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:07:33,042 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:33] "GET /restaurant/orders?status=pending HTTP/1.1" 200 -
+2025-09-18 11:07:33,099 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:33] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 11:07:33,113 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:33] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 11:07:33,131 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:33] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 11:07:33,137 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:33] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:07:34,816 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:34] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 11:07:36,589 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 11:07:36] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:01:12,772 ERROR routes Menu management error: Object of type Restaurant is not JSON serializable
+2025-09-18 12:01:12,777 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:01:12] "GET /restaurant/menu HTTP/1.1" 200 -
+2025-09-18 12:01:12,915 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:01:12] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:01:12,977 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:01:12] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:01:13,009 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:01:13] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:01:13,021 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:01:13] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:01:15,284 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:01:15] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:01:52,379 ERROR routes Menu management error: Object of type Restaurant is not JSON serializable
+2025-09-18 12:01:52,385 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:01:52] "GET /restaurant/menu HTTP/1.1" 200 -
+2025-09-18 12:01:52,465 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:01:52] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:01:52,476 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:01:52] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:01:52,515 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:01:52] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:01:52,543 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:01:52] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:01:54,103 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:01:54] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:02:04,656 INFO routes User burger_barn_owner logged out
+2025-09-18 12:02:04,659 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:04] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-09-18 12:02:04,685 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:04] "GET / HTTP/1.1" 200 -
+2025-09-18 12:02:04,751 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:04] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:02:04,762 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:04] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:02:04,797 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:04] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:02:04,806 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:04] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:02:06,586 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:06] "GET /login HTTP/1.1" 200 -
+2025-09-18 12:02:06,639 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:06] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:02:06,659 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:06] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:02:06,678 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:06] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:02:06,706 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:06] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:02:10,889 INFO routes Login attempt for username: john_doe
+2025-09-18 12:02:10,894 INFO routes User found in database: True
+2025-09-18 12:02:11,182 INFO routes Password valid for john_doe: True
+2025-09-18 12:02:11,185 INFO routes Flask-Login login_user result: True
+2025-09-18 12:02:11,186 INFO routes User john_doe logged in successfully
+2025-09-18 12:02:11,189 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:11] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-18 12:02:11,267 ERROR routes Customer dashboard error: 'models.Restaurant object' has no attribute 'restaurant'
+2025-09-18 12:02:11,272 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:11] "GET /customer/dashboard HTTP/1.1" 200 -
+2025-09-18 12:02:11,368 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:11] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:02:11,376 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:11] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:02:11,404 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:11] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:02:11,422 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:11] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:02:13,519 ERROR routes Browse restaurants error: 'float' is undefined
+2025-09-18 12:02:13,526 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:13] "GET /customer/restaurants HTTP/1.1" 200 -
+2025-09-18 12:02:13,622 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:13] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:02:13,642 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:13] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:02:13,668 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:13] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:02:13,688 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:13] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:02:18,854 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:18] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-18 12:02:18,858 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:18] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:02:21,877 ERROR routes Browse restaurants error: 'float' is undefined
+2025-09-18 12:02:21,883 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:21] "GET /customer/restaurants HTTP/1.1" 200 -
+2025-09-18 12:02:21,959 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:21] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+2025-09-18 12:02:21,971 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:21] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:02:21,971 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:21] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:02:22,015 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:22] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:02:22,033 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:02:22] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:11:44,238 ERROR routes Browse restaurants error: Could not build url for endpoint 'restaurant_detail' with values ['restaurant_id']. Did you mean 'restaurant_orders' instead?
+2025-09-18 12:11:44,243 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:44] "GET /customer/restaurants HTTP/1.1" 200 -
+2025-09-18 12:11:44,307 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:44] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:11:44,308 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:44] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:11:44,357 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:44] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:11:44,363 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:44] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:11:50,500 INFO routes User john_doe logged out
+2025-09-18 12:11:50,503 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:50] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-09-18 12:11:50,533 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:50] "GET / HTTP/1.1" 200 -
+2025-09-18 12:11:50,595 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:50] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:11:50,623 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:50] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:11:50,665 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:50] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:11:50,678 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:50] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:11:51,817 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:51] "GET /login HTTP/1.1" 200 -
+2025-09-18 12:11:51,871 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:51] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:11:51,885 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:51] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:11:51,905 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:51] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:11:51,929 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:51] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:11:54,234 INFO routes Login attempt for username: pizza_palace_owner
+2025-09-18 12:11:54,239 INFO routes User found in database: True
+2025-09-18 12:11:54,546 INFO routes Password valid for pizza_palace_owner: True
+2025-09-18 12:11:54,547 INFO routes Flask-Login login_user result: True
+2025-09-18 12:11:54,548 INFO routes User pizza_palace_owner logged in successfully
+2025-09-18 12:11:54,550 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:54] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-18 12:11:54,587 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:54] "GET /restaurant/dashboard HTTP/1.1" 200 -
+2025-09-18 12:11:54,652 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:54] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:11:54,660 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:54] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:11:54,691 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:54] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:11:54,701 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:11:54] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:12:03,262 INFO routes User pizza_palace_owner logged out
+2025-09-18 12:12:03,266 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:03] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-09-18 12:12:03,295 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:03] "GET / HTTP/1.1" 200 -
+2025-09-18 12:12:03,377 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:03] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:12:03,379 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:03] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:12:03,415 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:03] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:12:03,426 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:03] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:12:04,681 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:04] "GET /login HTTP/1.1" 200 -
+2025-09-18 12:12:04,740 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:04] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:12:04,752 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:04] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:12:04,778 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:04] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:12:04,796 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:04] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:12:10,129 INFO routes Login attempt for username: john_doe
+2025-09-18 12:12:10,134 INFO routes User found in database: True
+2025-09-18 12:12:10,439 INFO routes Password valid for john_doe: True
+2025-09-18 12:12:10,442 INFO routes Flask-Login login_user result: True
+2025-09-18 12:12:10,443 INFO routes User john_doe logged in successfully
+2025-09-18 12:12:10,445 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:10] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-09-18 12:12:10,488 ERROR routes Customer dashboard error: 'models.Restaurant object' has no attribute 'restaurant'
+2025-09-18 12:12:10,504 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:10] "GET /customer/dashboard HTTP/1.1" 200 -
+2025-09-18 12:12:10,606 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:10] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:12:10,609 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:10] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:12:10,664 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:10] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:12:10,674 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:10] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:12:11,992 ERROR routes Browse restaurants error: Could not build url for endpoint 'restaurant_detail' with values ['restaurant_id']. Did you mean 'restaurant_orders' instead?
+2025-09-18 12:12:11,996 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:11] "GET /customer/restaurants HTTP/1.1" 200 -
+2025-09-18 12:12:12,059 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:12] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 12:12:12,079 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:12] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 12:12:12,111 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:12] "GET /api/cart/count HTTP/1.1" 200 -
+2025-09-18 12:12:12,118 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:12:12] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 12:16:26,816 INFO werkzeug  * Detected change in 'C:\\Users\\adityasingh04\\Pictures\\JustEat\\routes.py', reloading
+2025-09-18 12:16:27,101 INFO werkzeug  * Restarting with stat
+2025-09-18 12:24:52,351 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-09-18 12:24:52,352 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-09-18 12:24:52,356 INFO werkzeug  * Restarting with stat
+2025-09-18 12:24:53,762 WARNING werkzeug  * Debugger is active!
+2025-09-18 12:24:53,768 INFO werkzeug  * Debugger PIN: 775-477-527
+2025-09-18 12:24:55,196 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:24:55] "[32mGET / HTTP/1.1[0m" 302 -
+2025-09-18 12:24:55,633 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:24:55] "[35m[1mGET /customer/dashboard HTTP/1.1[0m" 500 -
+2025-09-18 12:24:55,816 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:24:55] "GET /customer/dashboard?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-09-18 12:24:55,857 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:24:55] "GET /customer/dashboard?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-09-18 12:24:55,998 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:24:55] "GET /customer/dashboard?__debugger__=yes&cmd=resource&f=console.png&s=NJc8s9z3eSLNJCxCqcu9 HTTP/1.1" 200 -
+2025-09-18 12:24:56,033 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 12:24:56] "GET /customer/dashboard?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-09-18 13:46:59,424 INFO werkzeug  * Detected change in 'C:\\Users\\adityasingh04\\Pictures\\JustEat\\routes.py', reloading
+2025-09-18 13:46:59,756 INFO werkzeug  * Restarting with stat
+2025-09-18 13:47:01,419 WARNING werkzeug  * Debugger is active!
+2025-09-18 13:47:01,423 INFO werkzeug  * Debugger PIN: 775-477-527
+2025-09-18 13:47:03,101 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 13:47:03] "[35m[1mGET /customer/dashboard HTTP/1.1[0m" 500 -
+2025-09-18 13:47:03,250 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 13:47:03] "[36mGET /customer/dashboard?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-09-18 13:47:03,252 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 13:47:03] "[36mGET /customer/dashboard?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-09-18 13:47:03,286 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 13:47:03] "GET /customer/dashboard?__debugger__=yes&cmd=resource&f=console.png&s=RuVkzMN3LCQXKnL71Qa6 HTTP/1.1" 200 -
+2025-09-18 13:47:03,301 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 13:47:03] "[36mGET /customer/dashboard?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-09-18 13:48:28,059 INFO werkzeug  * Detected change in 'C:\\Users\\adityasingh04\\Pictures\\JustEat\\routes.py', reloading
+2025-09-18 13:48:28,381 INFO werkzeug  * Restarting with stat
+2025-09-18 13:48:29,908 WARNING werkzeug  * Debugger is active!
+2025-09-18 13:48:29,913 INFO werkzeug  * Debugger PIN: 775-477-527
+2025-09-18 13:48:30,842 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 13:48:30] "[35m[1mGET /customer/dashboard HTTP/1.1[0m" 500 -
+2025-09-18 13:48:31,000 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 13:48:31] "[36mGET /customer/dashboard?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-09-18 13:48:31,001 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 13:48:31] "[36mGET /customer/dashboard?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-09-18 13:48:31,027 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 13:48:31] "GET /customer/dashboard?__debugger__=yes&cmd=resource&f=console.png&s=WB7SYeydzilUvbGyIp7J HTTP/1.1" 200 -
+2025-09-18 13:48:31,044 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 13:48:31] "[36mGET /customer/dashboard?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-09-18 14:04:23,704 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:23] "GET /customer/dashboard HTTP/1.1" 200 -
+2025-09-18 14:04:23,785 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:23] "[33mGET /static/images/pizza_palace.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:04:23,788 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:23] "[33mGET /static/images/sushi_spot.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:04:23,788 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:23] "[33mGET /static/images/burger_barn.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:04:23,824 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:23] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 14:04:23,880 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:23] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 14:04:24,018 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:24] "[33mGET /api/cart/count HTTP/1.1[0m" 404 -
+2025-09-18 14:04:24,294 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:24] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 14:04:27,549 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:27] "[35m[1mGET /customer/restaurants HTTP/1.1[0m" 500 -
+2025-09-18 14:04:27,675 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:27] "GET /customer/restaurants?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-09-18 14:04:27,697 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:27] "GET /customer/restaurants?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-09-18 14:04:27,767 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:27] "GET /customer/restaurants?__debugger__=yes&cmd=resource&f=console.png&s=WB7SYeydzilUvbGyIp7J HTTP/1.1" 200 -
+2025-09-18 14:04:27,792 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:27] "GET /customer/restaurants?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-09-18 14:14:48,099 INFO werkzeug  * Detected change in 'C:\\Users\\adityasingh04\\Pictures\\JustEat\\routes.py', reloading
+2025-09-18 14:14:48,319 INFO werkzeug  * Restarting with stat

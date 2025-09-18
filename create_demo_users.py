@@ -30,7 +30,7 @@ def create_demo_users():
         # Create customer users
         customers = [
             {
-                'username': 'john_doe',
+                'username': 'adi',
                 'email': 'john@example.com',
                 'password': 'password123',
                 'role': 'customer',
@@ -196,7 +196,7 @@ def create_demo_users():
         print("\n✅ Demo users, restaurants, and menu items created successfully!")
         print("\nDemo Accounts:")
         print("Customers:")
-        print("  - Username: john_doe, Password: password123")
+        print("  - Username: adi, Password: password123")
         print("  - Username: jane_smith, Password: password123")
         print("\nRestaurant Owners:")
         print("  - Username: pizza_palace_owner, Password: password123")
