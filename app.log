@@ -1730,3 +1730,92 @@
 2025-09-18 14:04:27,792 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:04:27] "GET /customer/restaurants?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
 2025-09-18 14:14:48,099 INFO werkzeug  * Detected change in 'C:\\Users\\adityasingh04\\Pictures\\JustEat\\routes.py', reloading
 2025-09-18 14:14:48,319 INFO werkzeug  * Restarting with stat
+2025-09-18 14:22:28,317 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-09-18 14:22:28,318 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-09-18 14:22:28,323 INFO werkzeug  * Restarting with stat
+2025-09-18 14:22:29,809 WARNING werkzeug  * Debugger is active!
+2025-09-18 14:22:29,814 INFO werkzeug  * Debugger PIN: 775-477-527
+2025-09-18 14:22:30,259 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:30] "GET /customer/restaurants HTTP/1.1" 200 -
+2025-09-18 14:22:30,355 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:30] "[33mGET /static/images/pizza_palace.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:30,356 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:30] "[33mGET /static/images/burger_barn.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:30,382 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:30] "[33mGET /static/images/sushi_spot.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:30,441 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:30] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 14:22:30,542 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:30] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 14:22:30,605 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:30] "[33mGET /api/cart/count HTTP/1.1[0m" 404 -
+2025-09-18 14:22:30,962 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:30] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 14:22:40,009 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:40] "[32mGET / HTTP/1.1[0m" 302 -
+2025-09-18 14:22:40,183 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:40] "GET /customer/dashboard HTTP/1.1" 200 -
+2025-09-18 14:22:40,234 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:40] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 14:22:40,247 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:40] "[33mGET /static/images/pizza_palace.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:40,248 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:40] "[33mGET /static/images/sushi_spot.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:40,249 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:40] "[33mGET /static/images/burger_barn.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:40,255 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:40] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 14:22:40,398 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:40] "[33mGET /api/cart/count HTTP/1.1[0m" 404 -
+2025-09-18 14:22:40,863 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:40] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 14:22:43,229 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:43] "GET /customer/restaurants HTTP/1.1" 200 -
+2025-09-18 14:22:43,283 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:43] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 14:22:43,303 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:43] "[33mGET /static/images/pizza_palace.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:43,316 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:43] "[33mGET /static/images/sushi_spot.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:43,319 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:43] "[33mGET /static/images/burger_barn.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:43,328 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:43] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 14:22:43,350 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:43] "[33mGET /api/cart/count HTTP/1.1[0m" 404 -
+2025-09-18 14:22:43,657 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:43] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 14:22:45,340 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:45] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 14:22:51,701 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:51] "GET /customer/restaurants HTTP/1.1" 200 -
+2025-09-18 14:22:51,773 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:51] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 14:22:51,794 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:51] "[33mGET /static/images/sushi_spot.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:51,796 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:51] "[33mGET /static/images/pizza_palace.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:51,797 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:51] "[33mGET /static/images/burger_barn.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:51,813 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:51] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 14:22:51,831 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:51] "[33mGET /api/cart/count HTTP/1.1[0m" 404 -
+2025-09-18 14:22:52,231 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:52] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 14:22:55,355 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:55] "GET /customer/restaurant/3 HTTP/1.1" 200 -
+2025-09-18 14:22:55,436 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:55] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 14:22:55,441 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:55] "[33mGET /static/images/sushi_spot.jpg HTTP/1.1[0m" 404 -
+2025-09-18 14:22:55,454 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:55] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 14:22:55,485 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:55] "[33mGET /api/cart/count HTTP/1.1[0m" 404 -
+2025-09-18 14:22:55,503 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:22:55] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 14:23:04,290 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:23:04] "GET /customer/cart HTTP/1.1" 200 -
+2025-09-18 14:23:04,366 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:23:04] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 14:23:04,379 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:23:04] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 14:23:04,412 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:23:04] "[33mGET /api/cart/count HTTP/1.1[0m" 404 -
+2025-09-18 14:23:04,432 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 14:23:04] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 15:27:35,717 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:35] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 15:27:49,323 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:49] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 15:27:53,580 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:53] "GET /customer/restaurant/4 HTTP/1.1" 200 -
+2025-09-18 15:27:53,690 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:53] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 15:27:53,755 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:53] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 15:27:53,777 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:53] "[33mGET /api/cart/count HTTP/1.1[0m" 404 -
+2025-09-18 15:27:54,039 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:54] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 15:27:57,225 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:57] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 15:27:58,593 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:58] "GET /customer/restaurant/3 HTTP/1.1" 200 -
+2025-09-18 15:27:58,676 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:58] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 15:27:58,679 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:58] "[33mGET /static/images/sushi_spot.jpg HTTP/1.1[0m" 404 -
+2025-09-18 15:27:58,706 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:58] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 15:27:58,727 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:58] "[33mGET /api/cart/count HTTP/1.1[0m" 404 -
+2025-09-18 15:27:58,737 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:27:58] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 15:28:04,859 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:28:04] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 15:28:06,005 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:28:06] "GET /customer/restaurant/2 HTTP/1.1" 200 -
+2025-09-18 15:28:06,069 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:28:06] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 15:28:06,083 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:28:06] "[33mGET /static/images/burger_barn.jpg HTTP/1.1[0m" 404 -
+2025-09-18 15:28:06,088 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:28:06] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 15:28:06,115 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:28:06] "[33mGET /api/cart/count HTTP/1.1[0m" 404 -
+2025-09-18 15:28:06,128 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:28:06] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 15:53:45,018 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:53:45] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 15:54:02,339 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:02] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-09-18 15:54:02,490 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:02] "GET / HTTP/1.1" 200 -
+2025-09-18 15:54:02,608 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:02] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-09-18 15:54:02,677 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:02] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+2025-09-18 15:54:02,704 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:02] "[33mGET /api/cart/count HTTP/1.1[0m" 404 -
+2025-09-18 15:54:02,715 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:02] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 15:54:10,793 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:10] "[35m[1mGET /login HTTP/1.1[0m" 500 -
+2025-09-18 15:54:10,918 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:10] "[36mGET /login?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-09-18 15:54:10,954 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:10] "[36mGET /login?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-09-18 15:54:11,023 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:11] "GET /login?__debugger__=yes&cmd=resource&f=console.png&s=Ix6un0IsZ21Vtm6fO0Dq HTTP/1.1" 200 -
+2025-09-18 15:54:11,060 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:11] "[36mGET /login?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-09-18 15:54:13,979 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:13] "[36mGET /static/favicon.ico HTTP/1.1[0m" 304 -
+2025-09-18 15:54:15,313 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:15] "[35m[1mGET /login HTTP/1.1[0m" 500 -
+2025-09-18 15:54:15,375 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:15] "[36mGET /login?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-09-18 15:54:15,394 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:15] "[36mGET /login?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-09-18 15:54:15,422 INFO werkzeug 127.0.0.1 - - [18/Sep/2025 15:54:15] "[36mGET /login?__debugger__=yes&cmd=resource&f=console.png&s=Ix6un0IsZ21Vtm6fO0Dq HTTP/1.1[0m" 304 -
